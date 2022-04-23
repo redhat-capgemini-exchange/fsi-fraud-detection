@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: KafkaTopic
+    apiVersion: kafka.strimzi.io/v1beta2
+    metadata:
+      name: tx-inbox
+      labels:
+        strimzi.io/cluster: transactions
+      namespace: fraud-detection
+    spec:
+      config:
+        retention.ms: 604800000
+        segment.bytes: 1073741824
+      partitions: 10
+      replicas: 3
+      topicName: tx-inbox
+
+  - kind: KafkaTopic
+    apiVersion: kafka.strimzi.io/v1beta2
+    metadata:
+      name: tx
+      labels:
+        strimzi.io/cluster: transactions
+      namespace: fraud-detection
+    spec:
+      config:
+        retention.ms: 604800000
+        segment.bytes: 1073741824
+      partitions: 10
+      replicas: 3
+      topicName: tx
+
+  - kind: KafkaTopic
+    apiVersion: kafka.strimzi.io/v1beta2
+    metadata:
+      name: tx-fraud
+      labels:
+        strimzi.io/cluster: transactions
+      namespace: fraud-detection
+    spec:
+      config:
+        retention.ms: 604800000
+        segment.bytes: 1073741824
+        min.insync.replicas: 2
+      partitions: 10
+      replicas: 3
+      topicName: tx-fraud
+
+  - kind: KafkaTopic
+    apiVersion: kafka.strimzi.io/v1beta2
+    metadata:
+      name: tx-audit
+      labels:
+        strimzi.io/cluster: transactions
+      namespace: fraud-detection
+    spec:
+      config:
+        retention.ms: 2419200000
+        segment.bytes: 1073741824
+      partitions: 10
+      replicas: 3
+      topicName: tx-audit
+
+  - kind: KafkaTopic
+    apiVersion: kafka.strimzi.io/v1beta2
+    metadata:
+      name: tx-archive
+      labels:
+        strimzi.io/cluster: transactions
+      namespace: fraud-detection
+    spec:
+      config:
+        retention.ms: 2419200000
+        segment.bytes: 1073741824
+      partitions: 10
+      replicas: 3
+      topicName: tx-archive

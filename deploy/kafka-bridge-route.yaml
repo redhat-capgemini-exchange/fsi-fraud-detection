@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: transaction-bridge-http
+  namespace: fraud-detection
+spec:
+  to:
+    kind: Service
+    name: transaction-bridge-bridge-service
+    weight: 100
+  port:
+    targetPort: rest-api
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
