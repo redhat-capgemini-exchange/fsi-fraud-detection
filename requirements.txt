@@ -8,3 +8,4 @@ pyarrow==7.0.0 # 4.0.1
 cloudpickle==2.0.0 # 1.6.0
 xgboost==1.5.2
 boto3==1.21.13 # 1.17.11
+kafka-python==2.0.2

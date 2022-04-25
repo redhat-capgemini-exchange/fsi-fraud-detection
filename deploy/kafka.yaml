@@ -13,7 +13,7 @@ spec:
       inter.broker.protocol.version: '3.0'
     storage:
       type: persistent-claim
-      size: '5'
+      size: '20'
     listeners:
       - name: plain
         port: 9092
