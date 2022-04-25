@@ -13,7 +13,7 @@ consumer = KafkaConsumer(
     bootstrap_servers=[KAFKA_SVC],
     auto_offset_reset='earliest',
     enable_auto_commit=True,
-    group_id='my-group',
+    group_id='topic-listener',
     value_deserializer=lambda x: loads(x.decode('utf-8')))
 
 print('started the consumer ...')

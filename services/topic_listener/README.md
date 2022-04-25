@@ -10,4 +10,5 @@ A simple service that connects to a Kafka topic and prints incoming messages.
 
 ### References
 
-* [https://github.com/sclorg/s2i-python-container/tree/master/3.9](Python 3.9 S2I)
+* https://github.com/sclorg/s2i-python-container/tree/master/3.9
+* https://kafka-python.readthedocs.io/en/master/apidoc/KafkaConsumer.html
