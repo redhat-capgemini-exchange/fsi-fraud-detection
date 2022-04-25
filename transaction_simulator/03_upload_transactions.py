@@ -14,7 +14,7 @@ KAFKA_BRIDGE_ROUTE = 'https://transaction-bridge-http-fraud-detection.apps.clust
 KAFKA_TOPIC = 'tx-inbox'
 
 DIR_INPUT = "./simulated-data/tx/"
-
+#
 START_DATE = "2020-04-01"
 END_DATE = "2020-04-30"
 
