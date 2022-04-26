@@ -10,3 +10,4 @@ xgboost==1.5.2
 boto3==1.21.13 # 1.17.11
 kafka-python==2.0.2
 requests==2.27.1
+google-cloud-storage==2.3.0

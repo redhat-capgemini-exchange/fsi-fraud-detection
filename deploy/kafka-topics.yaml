@@ -7,7 +7,7 @@ items:
       name: tx-inbox
       labels:
         strimzi.io/cluster: transactions
-      namespace: fraud-detection
+      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 604800000
@@ -22,7 +22,7 @@ items:
       name: tx
       labels:
         strimzi.io/cluster: transactions
-      namespace: fraud-detection
+      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 604800000
@@ -37,7 +37,7 @@ items:
       name: tx-fraud
       labels:
         strimzi.io/cluster: transactions
-      namespace: fraud-detection
+      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 604800000
@@ -53,7 +53,7 @@ items:
       name: tx-audit
       labels:
         strimzi.io/cluster: transactions
-      namespace: fraud-detection
+      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 2419200000
@@ -68,7 +68,7 @@ items:
       name: tx-archive
       labels:
         strimzi.io/cluster: transactions
-      namespace: fraud-detection
+      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 2419200000

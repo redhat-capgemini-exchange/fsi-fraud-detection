@@ -1,0 +1,20 @@
+kind: LimitRange
+apiVersion: v1
+metadata:
+  name: fsi-fraud-detection-core-resource-limits
+spec:
+  limits:
+    - type: Container
+      max:
+        cpu: '4'
+        memory: 8Gi
+      default:
+        cpu: 500m
+        memory: 2048Mi
+      defaultRequest:
+        cpu: 100m
+        memory: Mi
+    - type: Pod
+      max:
+        cpu: '4'
+        memory: 16Gi

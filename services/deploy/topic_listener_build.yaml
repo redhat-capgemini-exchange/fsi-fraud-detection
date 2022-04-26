@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: BuildConfig
+    apiVersion: build.openshift.io/v1
+    metadata:
+      name: topic-listener
+      labels:
+        svc: topic-listener
+        app: fsi-fraud-detection
+    spec:
+      source:
+        git:
+          ref: main
+          uri: "https://github.com/redhat-capgemini-exchange/fsi-fraud-detection"
+        contextDir: /services/topic_listener
+        type: Git
+      strategy:
+        type: Source
+        sourceStrategy:
+          from:
+            kind: ImageStreamTag
+            name: "python:3.9-ubi8"
+            namespace: openshift
+          env: []
+      output:
+        to:
+          kind: ImageStreamTag
+          name: topic-listener:latest
+      triggers:
+        - type: ImageChange
+          imageChange: {}
+        - type: ConfigChange
+
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
+      name: topic-listener
+      labels:
+        svc: topic-listener
+        app: fsi-fraud-detection
+      annotations:
+        description: topic-listener image

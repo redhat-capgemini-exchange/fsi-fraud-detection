@@ -7,6 +7,15 @@ Setup of a basic MLOps demonstrator inspired by the "Reproducible Machine Learni
 * [Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook](https://fraud-detection-handbook.github.io/fraud-detection-handbook/Foreword.html)
 * [https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook](https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook)
 
+
+
+
+
+
+
+
+
+
 ### OpenShift and Operators
 
 * OpenShift 4.9.22

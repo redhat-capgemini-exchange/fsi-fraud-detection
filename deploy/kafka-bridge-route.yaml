@@ -2,7 +2,7 @@ apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: transaction-bridge-http
-  namespace: fraud-detection
+  #namespace: fsi-fraud-detection
 spec:
   to:
     kind: Service

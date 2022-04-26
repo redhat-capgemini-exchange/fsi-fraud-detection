@@ -2,7 +2,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaBridge
 metadata:
   name: transaction-bridge
-  namespace: fraud-detection
+  #namespace: fsi-fraud-detection
 spec:
   http:
     port: 8080

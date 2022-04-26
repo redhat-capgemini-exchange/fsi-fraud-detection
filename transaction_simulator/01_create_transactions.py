@@ -13,7 +13,6 @@ START_DATE = "2020-04-01"
 END_DATE = "2020-05-30"
 
 DIR_OUTPUT = "./simulated-data/"
-TX_DIR = "raw/"
 
 
 # create the transactions
@@ -27,7 +26,8 @@ transactions_df = add_frauds(
 # save simulated tx data
 if not os.path.exists(DIR_OUTPUT):
     os.makedirs(DIR_OUTPUT)
-    os.makedirs(DIR_OUTPUT+TX_DIR)
+    os.makedirs(DIR_OUTPUT+ 'pkl/')
+    os.makedirs(DIR_OUTPUT+ 'csv/')
 
 start_date = datetime.datetime.strptime(START_DATE, "%Y-%m-%d")
 
@@ -37,8 +37,10 @@ for day in range(transactions_df.TX_TIME_DAYS.max()+1):
         'TX_TIME_SECONDS')
 
     date = start_date + datetime.timedelta(days=day)
-    filename_output = TX_DIR + date.strftime("%Y-%m-%d")+'.pkl'
-    transactions_day.to_pickle(DIR_OUTPUT+filename_output, protocol=4)
+    filename_output = date.strftime("%Y-%m-%d")
+    
+    transactions_day.to_pickle(DIR_OUTPUT+ "pkl/" + filename_output +'.pkl', protocol=4)
+    transactions_day.to_csv(DIR_OUTPUT+ "csv/" + filename_output +'.csv')
 
 # also save the customer and terminal data
 terminal_profiles_table.to_pickle(
