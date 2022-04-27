@@ -1,7 +1,7 @@
 import os
 
-from kafka import KafkaConsumer
-from json import loads
+from kafka import KafkaConsumer, KafkaProducer
+from json import loads, dumps
 
 # KAFKA server config
 KAFKA_SVC = os.getenv('kafka_service')
@@ -25,9 +25,29 @@ consumer = KafkaConsumer(
     consumer_timeout_ms=-1,
     enable_auto_commit=True,
     client_id=CLIENT_ID,
-    group_id=GROUP_ID)
+    group_id=GROUP_ID,
+    value_deserializer=lambda x: loads(x.decode('utf-8')))
+
+producer = KafkaProducer(bootstrap_servers=[
+                         KAFKA_SERVER], value_serializer=lambda x: dumps(x).encode('utf-8'))
 
 print(f" --> listening on topic '{SOURCE_TOPIC}'")
 
 for msg in consumer:
-    print(msg)
+    # no idea, why we need a dubble loads ...
+    tx = loads(msg.value)
+
+    # transform the data
+    #tx = transform(tx)
+
+    # just some forced routing ...
+    if tx['TX_AMOUNT'] > 60:
+        tx['TX_FRAUD'] = 1
+        tx['TX_FRAUD_SCENARIO'] = 42
+        producer.send(FRAUD_TOPIC, value=tx)
+    else:
+        producer.send(ARCHIVE_TOPIC, value=tx)
+
+    # basic logging, because demo
+    print(
+        f" --> {tx['TRANSACTION_ID']}:[{tx['TX_DATETIME']},{tx['TERMINAL_ID']},{tx['TX_AMOUNT']}]")
