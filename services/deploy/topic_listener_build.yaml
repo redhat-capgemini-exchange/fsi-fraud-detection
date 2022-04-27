@@ -9,6 +9,7 @@ items:
         svc: topic-listener
         app: fsi-fraud-detection
     spec:
+      runPolicy: Serial
       source:
         git:
           ref: main
@@ -28,6 +29,10 @@ items:
           kind: ImageStreamTag
           name: topic-listener:latest
       triggers:
+        - type: GitHub
+          github:
+            secretReference:
+              name: fsi-fraud-detection-xops-secrets
         - type: ImageChange
           imageChange: {}
         - type: ConfigChange
