@@ -10,7 +10,9 @@ KAFKA_SERVER = f"{KAFKA_SVC}:{KAFKA_SVC_PORT}"
 
 # service config
 SOURCE_TOPIC = os.getenv('source_topic')
-TARGET_TOPIC = os.getenv('target_topic')
+
+ARCHIVE_TOPIC = os.getenv('archive_topic')
+FRAUD_TOPIC = os.getenv('fraud_topic')
 
 CLIENT_ID = os.getenv('client_id')
 GROUP_ID = os.getenv('group_id')

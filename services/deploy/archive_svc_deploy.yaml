@@ -24,9 +24,11 @@ spec:
                 name: fsi-fraud-detection-config
           env:
             - name: 'APP_FILE'
-              value: 'data_svc.py'
-            - name: topic
+              value: 'archive_svc.py'
+
+            - name: source_topic
               value: 'tx-archive'
+            
             - name: client_id
               value: 'archive_svc'
             - name: group_id
