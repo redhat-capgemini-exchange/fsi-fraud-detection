@@ -42,4 +42,4 @@ for msg in consumer:
 
     # basic logging, because demo
     print(
-        f" --> {tx['TRANSACTION_ID']}:[{tx['TX_DATETIME']},{tx['TERMINAL_ID']},{tx['TX_AMOUNT']}]")
+        f" --> {tx['TRANSACTION_ID']}:[{tx['TX_DATETIME']},{tx['TERMINAL_ID']},{tx['TX_AMOUNT']}]:{tx['TX_FRAUD']}")
