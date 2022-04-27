@@ -88,3 +88,6 @@ for msg in consumer:
 
     # send it along
     producer.send(TARGET_TOPIC, value=tx)
+
+    # basic logging, because demo
+    print(f" --> {tx['TRANSACTION_ID']}:[{tx['TX_DATETIME']},{tx['TERMINAL_ID']},{tx['TX_AMOUNT']}]")
