@@ -3,6 +3,7 @@
 stuff.md
 *.csv
 *.pkl
+*.parquet
 secrets/*.json
 *_secrets.yaml
 

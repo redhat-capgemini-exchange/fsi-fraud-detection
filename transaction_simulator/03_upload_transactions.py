@@ -18,6 +18,10 @@ def upload_transactions(args):
 
     # read the raw transaction data
     transactions_df = read_from_files(args.dir, args.start, args.end)
+
+    # remove the TX_FRAUD,TX_FRAUD_SCENARIO columns in order to simulate a 'new' transaction
+    transactions_df = transactions_df.drop(['TX_FRAUD', 'TX_FRAUD_SCENARIO'], axis=1)
+
     NUM_TX = len(transactions_df)
 
     batch = []
