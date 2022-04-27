@@ -1,7 +1,7 @@
 import os
 
-from kafka import KafkaConsumer
-from json import loads
+from kafka import KafkaConsumer, KafkaProducer
+from json import loads, dumps
 
 # KAFKA server config
 KAFKA_SVC = os.getenv('kafka_service')
@@ -14,7 +14,6 @@ TARGET_TOPIC = os.getenv('target_topic')
 
 CLIENT_ID = os.getenv('client_id')
 GROUP_ID = os.getenv('group_id')
-
 
 consumer = KafkaConsumer(
     SOURCE_TOPIC,
@@ -33,10 +32,10 @@ print(f" --> listening on topic '{SOURCE_TOPIC}'")
 
 for msg in consumer:
     # no idea, why we need a dubble loads ...
-    tx = loads(msg.value)
+    tx = msg.value
 
     # transform the data
-    tx = transform(tx)
+    #tx = transform(tx)
 
     # send it along
     producer.send(TARGET_TOPIC, value=tx)

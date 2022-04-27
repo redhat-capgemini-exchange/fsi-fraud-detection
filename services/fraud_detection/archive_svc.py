@@ -14,7 +14,6 @@ SOURCE_TOPIC = os.getenv('source_topic')
 CLIENT_ID = os.getenv('client_id')
 GROUP_ID = os.getenv('group_id')
 
-
 consumer = KafkaConsumer(
     SOURCE_TOPIC,
     bootstrap_servers=[KAFKA_SERVER],
@@ -29,13 +28,9 @@ print(f" --> listening on topic '{SOURCE_TOPIC}'")
 
 for msg in consumer:
     # no idea, why we need a dubble loads ...
-    tx = loads(msg.value)
+    tx = msg.value
 
-    # transform the data
-    #tx = transform(tx)
-
-    # send it along to the archive_svc
-    # producer.send(ARCHIVE_TOPIC, value=tx)
+    # do nothing this is a sink
 
     # basic logging, because demo
     print(
