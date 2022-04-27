@@ -1,0 +1,37 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: data-svc
+  labels:
+    svc: data-svc
+    app: fsi-fraud-detection
+spec:
+  selector:
+    app: fsi-fraud-detection
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fsi-fraud-detection
+    spec:
+      containers:
+        - name: data-svc
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/fraud-detection:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: fsi-fraud-detection-config
+          env:
+            - name: 'APP_FILE'
+              value: 'data_svc.py'
+            
+            - name: source_topic
+              value: 'tx-inbox'
+            - name: target_topic
+              value: 'tx'
+              
+            - name: client_id
+              value: 'data_svc'
+            - name: group_id
+              value: 'data_svc'

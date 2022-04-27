@@ -25,7 +25,7 @@ consumer = KafkaConsumer(
     client_id=CLIENT_ID,
     group_id=GROUP_ID)
 
-print(f" --> listening on topic '{TOPIC}'")
+print(f" --> listening on topic '{SOURCE_TOPIC}'")
 
 for msg in consumer:
     print(msg)

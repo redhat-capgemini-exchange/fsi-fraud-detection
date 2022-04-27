@@ -1,0 +1,40 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: router-svc
+  labels:
+    svc: router-svc
+    app: fsi-fraud-detection
+spec:
+  selector:
+    app: fsi-fraud-detection
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fsi-fraud-detection
+    spec:
+      containers:
+        - name: router-svc
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/fraud-detection:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: fsi-fraud-detection-config
+          env:
+            - name: 'APP_FILE'
+              value: 'router_svc.py'
+            
+            - name: source_topic
+              value: 'tx'
+              
+            - name: archive_topic
+              value: 'tx-archive'
+            - name: fraud_topic
+              value: 'tx-fraud'
+
+            - name: client_id
+              value: 'router_svc'
+            - name: group_id
+              value: 'router_svc'
