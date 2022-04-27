@@ -34,14 +34,20 @@ Just install the Operators using the defaults and `latest`.
  
 ### Setup
 
-Create the default project:
-
+Create the default projects:
 
 ```shell
 oc new-project fsi-fraud-detection
+oc new-project fsi-fraud-detection-xops
 ```
 
-All deployment commands `MUST` be preformed in the context of this project/namespace!
+Allow images from namespace `fsi-fraud-detection-xops` to be pulled into `fsi-fraud-detection`:
+
+```shell
+oc policy add-role-to-user \
+    system:image-puller system:serviceaccount:fsi-fraud-detection:default \
+    --namespace=fsi-fraud-detection-xops
+```
 
 #### Preparation
 

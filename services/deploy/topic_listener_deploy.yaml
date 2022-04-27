@@ -17,11 +17,15 @@ spec:
       containers:
         - name: topic-listener
           image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection/topic-listener:latest
+            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/topic-listener:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: fsi-fraud-detection-config
           env:
-            - name: kafka_topic
+            - name: topic
               value: 'tx-inbox'
+            - name: client_id
+              value: 'topic-listener'
+            - name: group_id
+              value: 'topic-listener'
