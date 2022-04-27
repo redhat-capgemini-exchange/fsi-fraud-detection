@@ -4,6 +4,7 @@ Setup of a basic MLOps demonstrator inspired by the "[Reproducible Machine Learn
 
 ### References
 
+* [Fraud detection with machine learning](https://www.researchgate.net/project/Fraud-detection-with-machine-learning)
 * [Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook](https://fraud-detection-handbook.github.io/fraud-detection-handbook/Foreword.html)
 * [https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook](https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook)
 
