@@ -5,6 +5,7 @@ metadata:
   labels:
     svc: archive-svc
     app: fsi-fraud-detection
+    app.openshift.io/runtime: golang
 spec:
   selector:
     app: fsi-fraud-detection
@@ -17,15 +18,14 @@ spec:
       containers:
         - name: archive-svc
           image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/fraud-detection:latest
+            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/archive-svc:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: fsi-fraud-detection-config
           env:
-            - name: 'APP_FILE'
-              value: 'archive_svc.py'
-
+            #- name: 'APP_FILE'
+            #  value: 'archive_svc.py'
             - name: source_topic
               value: 'tx-archive'
             
