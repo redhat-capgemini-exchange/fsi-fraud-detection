@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: List
+items:
+
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
+      name: archive-svc
+      labels:
+        svc: archive-svc
+        app: fsi-fraud-detection
+        app.openshift.io/runtime: golang
+      annotations:
+        description: archive-svc services image
+
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
+      name: fraud-detection
+      labels:
+        app: fsi-fraud-detection
+        app.openshift.io/runtime: python
+      annotations:
+        description: fraud-detection services image

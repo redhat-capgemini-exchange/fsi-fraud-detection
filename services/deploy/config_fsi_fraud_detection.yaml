@@ -5,9 +5,4 @@ metadata:
 data:
   kafka_service: 'transactions-kafka-bootstrap.fsi-fraud-detection.svc.cluster.local'
   kafka_service_port: '9092'
-  #example.property.1: hello
-  #example.property.2: world
-  #example.property.file: |-
-  #  property.1=value-1
-  #  property.2=value-2
-  #  property.3=value-3
+  

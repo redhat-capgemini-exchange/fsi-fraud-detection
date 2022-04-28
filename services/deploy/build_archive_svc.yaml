@@ -4,30 +4,31 @@ items:
   - kind: BuildConfig
     apiVersion: build.openshift.io/v1
     metadata:
-      name: fraud-detection
+      name: archive-svc
       labels:
         app: fsi-fraud-detection
-        app.openshift.io/runtime: python
+        app.openshift.io/runtime: golang
     spec:
       runPolicy: Serial
       source:
         git:
-          ref: main
+          ref: develop
           uri: "https://github.com/redhat-capgemini-exchange/fsi-fraud-detection"
-        contextDir: /services/fraud_detection
         type: Git
       strategy:
         type: Source
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: "python:3.9-ubi8"
-            namespace: openshift
-          env: []
+            name: "golang-custom:1.16.12"
+            #namespace: openshift
+          env:
+            - name: BUILD_DIR
+              value: services/archive_svc
       output:
         to:
           kind: ImageStreamTag
-          name: fraud-detection:latest
+          name: archive-svc:latest
       triggers:
         - type: GitHub
           github:
@@ -36,4 +37,3 @@ items:
         - type: ImageChange
           imageChange: {}
         - type: ConfigChange
-

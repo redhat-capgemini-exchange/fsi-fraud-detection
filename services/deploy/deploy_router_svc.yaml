@@ -5,6 +5,7 @@ metadata:
   labels:
     svc: router-svc
     app: fsi-fraud-detection
+    app.openshift.io/runtime: python
 spec:
   selector:
     app: fsi-fraud-detection
