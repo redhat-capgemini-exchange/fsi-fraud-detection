@@ -14,9 +14,14 @@ mkdir -p $GOPATH/src/$IMPORT_URL
 
 mv /tmp/src/* $GOPATH/src
 
+ls -la $GOPATH/src
+
 echo "Building"
 
 cd $GOPATH/src/$BUILD_DIR
+
+pwd
+ls -la
 
 go get -v -t -d ./...
 GOOS=linux GOARCH=amd64 go build -o app $APP_FILE && chmod +x app && mv app $APP_ROOT/app
