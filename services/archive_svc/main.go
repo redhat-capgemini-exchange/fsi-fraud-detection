@@ -21,12 +21,13 @@ func main() {
 
 	source := env.GetString("source_topic", "tx-archive")
 
+	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	c, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers":   kafkaServer,
-		"client.id":           clientID,
-		"group.id":            groupID,
-		"consumer.timeout.ms": -1,
-		"auto.offset.reset":   "earliest",
+		"bootstrap.servers":       kafkaServer,
+		"client.id":               clientID,
+		"group.id":                groupID,
+		"connections.max.idle.ms": 0,
+		"auto.offset.reset":       "earliest",
 	})
 
 	if err != nil {
