@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/txsvc/stdlib/v2/env"
@@ -28,13 +31,21 @@ func main() {
 		"group.id":                groupID,
 		"connections.max.idle.ms": 0,
 		"auto.offset.reset":       "earliest",
+		"broker.address.family":   "v4",
 	})
-
 	if err != nil {
 		panic(err)
 	}
 
-	c.SubscribeTopics([]string{source}, nil)
+	sigchan := make(chan os.Signal, 1)
+	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+
+	err = c.SubscribeTopics([]string{source}, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf(" --> listening on topic '%s'\n", source)
 
 	for {
 		msg, err := c.ReadMessage(-1)
