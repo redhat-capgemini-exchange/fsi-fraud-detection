@@ -1,11 +1,10 @@
-FROM ubi8/go-toolset:1.16.12-10
+FROM ubi8/s2i-base:rhel8.5
 
 ENV NAME=golang \
     GO_MAJOR_VERSION=1 \
     GO_MINOR_VERSION=16 \
     GO_PATCH_VERSION=12 \
-    CONTAINER_NAME="rhel8/go-custom" \
-    BUILD_DIR="."
+    CONTAINER_NAME="rhel8/go-toolset"
 
 # Define the VERSION environment variable in a separate step, so we can
 # re-use the GO_MAJOR_VERSION, GO_MINOR_VERSION and GO_PATCH_VERSION variables. 
@@ -24,8 +23,15 @@ LABEL summary="$SUMMARY" \
       name="$CONTAINER_NAME" \
       version="$VERSION"
 
+RUN INSTALL_PKGS="go-toolset" && \
+    yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
+    rpm -V $INSTALL_PKGS && \
+    yum clean all -y
+
 # Copy the custom S2I scripts to $STI_SCRIPTS_PATH.
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
+
+COPY ./root/ /
 
 RUN chown -R 1001:0 $STI_SCRIPTS_PATH && chown -R 1001:0 $APP_ROOT
 
