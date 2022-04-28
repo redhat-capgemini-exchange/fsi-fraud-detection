@@ -18,7 +18,7 @@ ls -la $GOPATH/src
 
 echo "Building"
 
-cd $GOPATH/src/$BUILD_DIR
+cd $GOPATH/src
 
 pwd
 ls -la
