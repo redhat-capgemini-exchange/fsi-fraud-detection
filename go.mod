@@ -1,4 +1,4 @@
-module github.com/redhat-capgemini-exchange/fsi-fraud-detection/services/archive_svc
+module github.com/redhat-capgemini-exchange/fsi-fraud-detection
 
 go 1.16
 

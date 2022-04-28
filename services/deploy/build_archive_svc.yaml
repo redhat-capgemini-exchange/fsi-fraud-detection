@@ -14,7 +14,7 @@ items:
         git:
           ref: develop
           uri: "https://github.com/redhat-capgemini-exchange/fsi-fraud-detection"
-        contextDir: /services/archive_svc
+        contextDir: services/archive_svc
         type: Git
       strategy:
         type: Source
