@@ -31,7 +31,7 @@ RUN INSTALL_PKGS="go-toolset" && \
 # Copy the custom S2I scripts to $STI_SCRIPTS_PATH.
 COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 
-COPY ./root/ /
+#COPY ./root/ /
 
 RUN chown -R 1001:0 $STI_SCRIPTS_PATH && chown -R 1001:0 $APP_ROOT
 
