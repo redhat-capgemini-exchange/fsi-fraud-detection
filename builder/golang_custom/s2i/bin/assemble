@@ -13,17 +13,17 @@ export GOPATH=`realpath $HOME/go`
 mkdir -p $GOPATH/src/$IMPORT_URL
 mv /tmp/src/* $GOPATH/src
 
+# debug
+ls -la $GOPATH/src
+
 echo "Building"
 
-cd $GOPATH/src
+cd $GOPATH/src && go get -v -t -d ./...
 
-go get -v -t -d ./...
-GOOS=linux GOARCH=amd64 go build -o app $APP_FILE
-chmod +x app
+cd $GOPATH/src/$BUILD_DIR && GOOS=linux GOARCH=amd64 go build -o app $APP_FILE && chmod +x app && mv app /opt/app-root/app
 
-ls -la
-
-mv app /opt/app-root/app
+# debug
+ls -la /opt/app-root
 
 popd
 
