@@ -57,9 +57,5 @@ func main() {
 		}
 	}
 
-<<<<<<< HEAD
 	//c.Close()
-=======
-	c.Close()
->>>>>>> 5e04de78fe919461e18bfa7cc2c1290acd26aed9
 }
