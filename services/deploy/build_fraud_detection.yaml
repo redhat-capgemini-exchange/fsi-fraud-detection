@@ -36,12 +36,3 @@ items:
           imageChange: {}
         - type: ConfigChange
 
-  - kind: ImageStream
-    apiVersion: image.openshift.io/v1
-    metadata:
-      name: fraud-detection
-      labels:
-        svc: fraud-detection
-        app: fsi-fraud-detection
-      annotations:
-        description: fraud-detection services image
