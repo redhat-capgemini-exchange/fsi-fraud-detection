@@ -4,7 +4,9 @@ items:
   - kind: BuildConfig
     apiVersion: build.openshift.io/v1
     metadata:
-      name: example
+      name: golang-custom
+      labels:
+        app.openshift.io/runtime: golang
     spec:
       source:
         git:
