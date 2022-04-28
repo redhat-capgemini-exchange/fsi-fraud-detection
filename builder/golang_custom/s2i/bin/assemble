@@ -18,7 +18,12 @@ echo "Building"
 cd $GOPATH/src
 
 go get -v -t -d ./...
-GOOS=linux GOARCH=amd64 go build -o app $APP_FILE && chmod +x app && mv app $APP_ROOT/app
+GOOS=linux GOARCH=amd64 go build -o app $APP_FILE
+chmod +x app
+
+ls -la
+
+mv app /opt/app-root/app
 
 popd
 
