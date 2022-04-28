@@ -4,7 +4,8 @@ ENV NAME=golang \
     GO_MAJOR_VERSION=1 \
     GO_MINOR_VERSION=16 \
     GO_PATCH_VERSION=12 \
-    CONTAINER_NAME="rhel8/go-toolset"
+    CONTAINER_NAME="rhel8/go-toolset" \
+    APP_FILE="main.go"
 
 # Define the VERSION environment variable in a separate step, so we can
 # re-use the GO_MAJOR_VERSION, GO_MINOR_VERSION and GO_PATCH_VERSION variables. 
