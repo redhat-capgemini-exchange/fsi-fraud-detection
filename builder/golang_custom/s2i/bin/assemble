@@ -12,5 +12,9 @@ echo "PATH $PATH"
 echo "HOME $HOME"
 echo "pwd"
 pwd
+echo "go"
+go version
+find go
+echo "done"
 
 popd
