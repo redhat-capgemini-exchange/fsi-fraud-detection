@@ -5,16 +5,22 @@ set -e
 echo "CUSTOM ASSEMBLE"
 
 pushd /tmp/src
-echo "GOPATH $GOPATH"
-echo "INSTALL_URL $INSTALL_URL"
-echo "IMPORT_URL $IMPORT_URL"
-echo "PATH $PATH"
-echo "HOME $HOME"
-echo "pwd"
-pwd
-echo "go"
-go version
-find go
-echo "done"
+
+echo "Assembling GOPATH"
+
+export GOPATH=`realpath $HOME/go`
+
+mkdir -p $GOPATH/src/$IMPORT_URL
+
+mv /tmp/src/* $GOPATH/src
+
+echo "Building"
+
+cd $GOPATH/src/$BUILD_DIR
+
+go get -v -t -d ./...
+GOOS=linux GOARCH=amd64 go build -o app $APP_FILE && chmod +x app && mv app $APP_ROOT/app
 
 popd
+
+exit
