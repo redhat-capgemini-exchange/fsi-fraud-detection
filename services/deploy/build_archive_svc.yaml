@@ -21,9 +21,11 @@ items:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: "golang:1.16.7-ubi8"
-            namespace: openshift
-          env: []
+            name: "golang-custom:1.16.12"
+            #namespace: openshift
+          env:
+            - name: BUILD_DIR
+              value: services/archive_svc
       output:
         to:
           kind: ImageStreamTag
@@ -36,4 +38,3 @@ items:
         - type: ImageChange
           imageChange: {}
         - type: ConfigChange
-
