@@ -1,4 +1,4 @@
-FROM ubi8/s2i-base:rhel8.5
+FROM rhel8/s2i-base:1-339
 
 ENV NAME=golang \
     GO_MAJOR_VERSION=1 \
