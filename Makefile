@@ -28,7 +28,7 @@ apply_config:
 apply_build:
 	oc apply -f services/deploy/images_fsi_fraud_detection.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f services/deploy/build_topic_listener.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f services/deploy/build_fraud_detection.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f services/deploy/build_data_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f services/deploy/build_archive_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f services/deploy/build_case_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f services/deploy/build_router_svc.yaml -n ${BUILD_NAMESPACE}
