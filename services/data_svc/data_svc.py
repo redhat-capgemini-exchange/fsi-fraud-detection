@@ -81,7 +81,8 @@ def get_customer_spending_behaviour_features(customer_transactions, windows_size
 
 
 def prepare(tx):
-    tx_dt = datetime.datetime.fromisoformat(tx['TX_DATETIME'])
+    #tx_dt = datetime.datetime.fromisoformat(tx['TX_DATETIME'])
+    tx_dt = datetime.datetime.fromtimestamp(tx['TX_DATETIME']/1000)
     tx['TX_DATETIME'] = tx_dt
     tx['TX_DURING_WEEKEND'] = is_weekend(tx_dt)
     tx['TX_DURING_NIGHT'] = is_night(tx_dt)
