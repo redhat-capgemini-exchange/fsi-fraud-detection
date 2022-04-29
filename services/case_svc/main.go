@@ -53,7 +53,22 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf(" --> listening on topic '%s'\n", source)
+	fmt.Printf(" --> %s: listening on topic '%s'\n", clientID, source)
+
+	// create a responder for delivery notifications
+	evts := make(chan kafka.Event, 1000) // FIXME not sure if such a number is needed ...
+	go func() {
+		e := <-evts
+
+		switch ev := e.(type) {
+		case *kafka.Message:
+			if ev.TopicPartition.Error != nil {
+				fmt.Printf("Delivery failed: %v\n", ev.TopicPartition)
+			} else {
+				fmt.Printf("Delivered message to %v\n", ev.TopicPartition)
+			}
+		}
+	}()
 
 	for {
 		msg, err := kc.ReadMessage(-1)
@@ -76,7 +91,7 @@ func main() {
 					Partition: kafka.PartitionAny,
 				},
 				Value: data,
-			}, nil)
+			}, evts)
 
 			if err != nil {
 				fmt.Printf(" --> producer error: %v\n", err)

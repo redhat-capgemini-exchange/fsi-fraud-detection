@@ -15,10 +15,10 @@ spec:
       labels:
         app: fsi-fraud-detection
     spec:
-      volumes:
-        - name: postgresql-data
-          persistentVolumeClaim:
-            claimName: postgresql
+      #volumes:
+      #  - name: postgresql-data
+      #    persistentVolumeClaim:
+      #      claimName: postgresql
       containers:
         - name: archive-svc
           image: >-
@@ -36,6 +36,6 @@ spec:
             - name: group_id
               value: 'archive_svc'
           
-          volumeMounts:
-            - name: postgresql-data
-              mountPath: /var/lib/pgsql/data
+          #volumeMounts:
+          #  - name: postgresql-data
+          #    mountPath: /var/lib/pgsql/data

@@ -45,7 +45,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf(" --> listening on topic '%s'\n", source)
+	fmt.Printf(" --> %s: listening on topic '%s'\n", clientID, source)
 
 	for {
 		msg, err := kc.ReadMessage(-1)
