@@ -91,6 +91,11 @@ def prepare(tx):
 
 
 def transform(tx):
+    # convert from Timestamp to UTC seconds, otherwise json pukes 
+    dt = tx['TX_DATETIME']
+    utc_time = dt.replace(tzinfo=datetime.timezone.utc)
+    tx['TX_DATETIME'] = int(utc_time.timestamp())
+    
     # first 2 new features
     #tx_dt = datetime.datetime.fromtimestamp(tx['TX_DATETIME']/1000)
     #tx['TX_DURING_WEEKEND'] = is_weekend(tx_dt)
