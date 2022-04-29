@@ -16,6 +16,14 @@ TARGET_TOPIC = os.getenv('target_topic')
 CLIENT_ID = os.getenv('client_id')
 GROUP_ID = os.getenv('group_id')
 
+tx_history = pd.DataFrame(columns=['TRANSACTION_ID',
+                                   'TX_DATETIME',
+                                   'CUSTOMER_ID',
+                                   'TERMINAL_ID',
+                                   'TX_AMOUNT',
+                                   'TX_TIME_SECONDS',
+                                   'TX_TIME_DAYS'])
+
 
 def is_weekend(tx_datetime):
 
@@ -37,23 +45,67 @@ def is_night(tx_datetime):
     return int(is_night)
 
 
+def get_customer_spending_behaviour_features(customer_transactions, windows_size_in_days=[1, 7, 30]):
+
+    # Let us first order transactions chronologically
+    customer_transactions = customer_transactions.sort_values('TX_DATETIME')
+
+    # The transaction date and time is set as the index, which will allow the use of the rolling function
+    customer_transactions.index = customer_transactions.TX_DATETIME
+
+    # For each window size
+    for window_size in windows_size_in_days:
+
+        # Compute the sum of the transaction amounts and the number of transactions for the given window size
+        SUM_AMOUNT_TX_WINDOW = customer_transactions['TX_AMOUNT'].rolling(
+            str(window_size)+'d').sum()
+        NB_TX_WINDOW = customer_transactions['TX_AMOUNT'].rolling(
+            str(window_size)+'d').count()
+
+        # Compute the average transaction amount for the given window size
+        # NB_TX_WINDOW is always >0 since current transaction is always included
+        AVG_AMOUNT_TX_WINDOW = SUM_AMOUNT_TX_WINDOW/NB_TX_WINDOW
+
+        # Save feature values
+        customer_transactions['CUSTOMER_ID_NB_TX_' +
+                              str(window_size)+'DAY_WINDOW'] = list(NB_TX_WINDOW)
+        customer_transactions['CUSTOMER_ID_AVG_AMOUNT_' +
+                              str(window_size)+'DAY_WINDOW'] = list(AVG_AMOUNT_TX_WINDOW)
+
+    # Reindex according to transaction IDs
+    customer_transactions.index = customer_transactions.TRANSACTION_ID
+
+    # And return the dataframe with the new features
+    return customer_transactions
+
+
+def prepare(tx):
+  tx_dt = datetime.datetime.fromisoformat(tx['TX_DATETIME'])
+  tx['TX_DATETIME'] = tx_dt
+  tx['TX_DURING_WEEKEND'] = is_weekend(tx_dt)
+  tx['TX_DURING_NIGHT'] = is_night(tx_dt)
+
+  return tx
+
+  
 def transform(tx):
     # first 2 new features
-    tx_dt = datetime.datetime.fromtimestamp(tx['TX_DATETIME']/1000)
-    tx['TX_DURING_WEEKEND'] = is_weekend(tx_dt)
-    tx['TX_DURING_NIGHT'] = is_night(tx_dt)
+    #tx_dt = datetime.datetime.fromtimestamp(tx['TX_DATETIME']/1000)
+    #tx['TX_DURING_WEEKEND'] = is_weekend(tx_dt)
+    #tx['TX_DURING_NIGHT'] = is_night(tx_dt)
 
     # TX_FRAUD,TX_FRAUD_SCENARIO -> -1 i.e. we don't know ...
     tx['TX_FRAUD'] = -1
     tx['TX_FRAUD_SCENARIO'] = -1
 
     # CUSTOMER_ID_NB_TX_1DAY_WINDOW,CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW,CUSTOMER_ID_NB_TX_7DAY_WINDOW,CUSTOMER_ID_AVG_AMOUNT_7DAY_WINDOW,CUSTOMER_ID_NB_TX_30DAY_WINDOW,CUSTOMER_ID_AVG_AMOUNT_30DAY_WINDOW,TERMINAL_ID_NB_TX_1DAY_WINDOW,TERMINAL_ID_RISK_1DAY_WINDOW,TERMINAL_ID_NB_TX_7DAY_WINDOW,TERMINAL_ID_RISK_7DAY_WINDOW,TERMINAL_ID_NB_TX_30DAY_WINDOW,TERMINAL_ID_RISK_30DAY_WINDOW
-    tx['CUSTOMER_ID_NB_TX_1DAY_WINDOW'] = 0
-    tx['CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW'] = 0
-    tx['CUSTOMER_ID_NB_TX_7DAY_WINDOW'] = 0
-    tx['CUSTOMER_ID_AVG_AMOUNT_7DAY_WINDOW'] = 0
-    tx['CUSTOMER_ID_NB_TX_30DAY_WINDOW'] = 0
-    tx['CUSTOMER_ID_AVG_AMOUNT_30DAY_WINDOW'] = 0
+    #tx['CUSTOMER_ID_NB_TX_1DAY_WINDOW'] = 0
+    #tx['CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW'] = 0
+    #tx['CUSTOMER_ID_NB_TX_7DAY_WINDOW'] = 0
+    #tx['CUSTOMER_ID_AVG_AMOUNT_7DAY_WINDOW'] = 0
+    #tx['CUSTOMER_ID_NB_TX_30DAY_WINDOW'] = 0
+    #tx['CUSTOMER_ID_AVG_AMOUNT_30DAY_WINDOW'] = 0
+
     tx['TERMINAL_ID_NB_TX_1DAY_WINDOW'] = 0
     tx['TERMINAL_ID_RISK_1DAY_WINDOW'] = 0
     tx['TERMINAL_ID_NB_TX_7DAY_WINDOW'] = 0
@@ -83,11 +135,20 @@ for msg in consumer:
     # no idea, why we need a dubble loads ...
     tx = loads(msg.value)
 
+    # add the new tx to the in-memory 'database'
+    tx_history = tx_history.append(prepare(tx), ignore_index=True)
+
+    # calculate the spending behaviour in 1,7,30 time window
+    tx_spending = get_customer_spending_behaviour_features(tx_history[tx_history.CUSTOMER_ID==tx['CUSTOMER_ID']])
+    
+    # only the latest tx is relevant
+    tx0 = tx_spending[tx_spending.TRANSACTION_ID==tx['TRANSACTION_ID']]
+    
     # transform the data
-    tx = transform(tx)
+    tx1 = transform(tx0.to_dict(orient='records')[0])
 
     # send it along
-    producer.send(TARGET_TOPIC, value=tx)
+    producer.send(TARGET_TOPIC, value=tx1)
 
     # basic logging, because demo
     print(
