@@ -8,7 +8,9 @@ Setup of a basic MLOps demonstrator inspired by the "[Reproducible Machine Learn
 * [Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook](https://fraud-detection-handbook.github.io/fraud-detection-handbook/Foreword.html)
 * [https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook](https://github.com/Fraud-Detection-Handbook/fraud-detection-handbook)
 
+### APIs and modules
 
+* [https://pkg.go.dev/github.com/confluentinc/confluent-kafka-go@v1.8.2/kafka](confluent-kafka-go )
 
 
 ### Local development

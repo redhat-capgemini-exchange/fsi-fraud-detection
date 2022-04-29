@@ -24,9 +24,6 @@ spec:
             - configMapRef:
                 name: fsi-fraud-detection-config
           env:
-            - name: 'APP_FILE'
-              value: 'case_svc.py'
-            
             - name: source_topic
               value: 'tx-fraud'
             - name: target_topic

@@ -19,10 +19,11 @@ func main() {
 	kafkaServicePort := env.GetString("kafka_service_port", "9092")
 	kafkaServer := fmt.Sprintf("%s:%s", kafkaService, kafkaServicePort)
 
-	clientID := env.GetString("client_id", "archive-svc")
+	clientID := env.GetString("client_id", "case-svc")
 	groupID := env.GetString("group_id", "fsi-fraud-detection")
 
-	source := env.GetString("source_topic", "tx-archive")
+	source := env.GetString("source_topic", "tx-fraud")
+	target := env.GetString("target_topic", "tx-archive")
 
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
@@ -32,6 +33,13 @@ func main() {
 		"connections.max.idle.ms": 0,
 		"auto.offset.reset":       "earliest",
 		"broker.address.family":   "v4",
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	kp, err := kafka.NewProducer(&kafka.ConfigMap{
+		"bootstrap.servers": kafkaServer,
 	})
 	if err != nil {
 		panic(err)
@@ -54,11 +62,28 @@ func main() {
 			err = json.Unmarshal(msg.Value, &tx)
 
 			fmt.Printf(" ---> message on %s: %v\n", msg.TopicPartition, tx)
+
+			// back to a json string
+			data, err := json.Marshal(tx)
+			if err != nil {
+				// do something
+			}
+
+			// send to the next destination
+			err = kp.Produce(&kafka.Message{
+				TopicPartition: kafka.TopicPartition{
+					Topic:     &target,
+					Partition: kafka.PartitionAny,
+				},
+				Value: data,
+			}, nil)
+
+			if err != nil {
+				fmt.Printf(" --> producer error: %v\n", err)
+			}
 		} else {
 			// The client will automatically try to recover from all errors.
 			fmt.Printf(" --> consumer error: %v (%v)\n", err, msg)
 		}
 	}
-
-	//c.Close()
 }
