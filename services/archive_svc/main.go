@@ -22,7 +22,7 @@ func main() {
 	clientID := env.GetString("client_id", "archive-svc")
 	groupID := env.GetString("group_id", "fsi-fraud-detection")
 
-	source := env.GetString("source_topic", "tx-archive")
+	sourceTopic := env.GetString("source_topic", "tx-archive")
 
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
@@ -40,12 +40,12 @@ func main() {
 	//sigchan := make(chan os.Signal, 1)
 	//signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	err = kc.SubscribeTopics([]string{source}, nil)
+	err = kc.SubscribeTopics([]string{sourceTopic}, nil)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Printf(" --> %s: listening on topic '%s'\n", clientID, source)
+	fmt.Printf(" --> %s: listening on topic '%s'\n", clientID, sourceTopic)
 
 	for {
 		msg, err := kc.ReadMessage(-1)

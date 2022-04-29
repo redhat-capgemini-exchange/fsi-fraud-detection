@@ -5,7 +5,7 @@ metadata:
   labels:
     svc: router-svc
     app: fsi-fraud-detection
-    app.openshift.io/runtime: python
+    app.openshift.io/runtime: golang
 spec:
   selector:
     app: fsi-fraud-detection
@@ -18,15 +18,12 @@ spec:
       containers:
         - name: router-svc
           image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/fraud-detection:latest
+            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/router-svc:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: fsi-fraud-detection-config
           env:
-            - name: 'APP_FILE'
-              value: 'router_svc.py'
-            
             - name: source_topic
               value: 'tx'
               

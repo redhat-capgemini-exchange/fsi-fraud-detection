@@ -27,6 +27,17 @@ items:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
+      name: router-svc
+      labels:
+        svc: router-svc
+        app: fsi-fraud-detection
+        app.openshift.io/runtime: golang
+      annotations:
+        description: router-svc services image
+
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
       name: fraud-detection
       labels:
         app: fsi-fraud-detection

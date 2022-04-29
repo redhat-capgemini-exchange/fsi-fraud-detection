@@ -23,7 +23,8 @@ func main() {
 	groupID := env.GetString("group_id", "fsi-fraud-detection")
 
 	sourceTopic := env.GetString("source_topic", "tx-fraud")
-	targetTopic := env.GetString("target_topic", "tx-archive")
+	archiveTopic := env.GetString("archive_topic", "tx-archive")
+	fraudTopic := env.GetString("fraud_topic", "tx-fraud")
 
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
@@ -79,6 +80,12 @@ func main() {
 
 			fmt.Printf(" ---> message on %s: %v\n", msg.TopicPartition, tx)
 
+			// FIXME this is just a simple dummy routing
+			nextTopic := archiveTopic
+			if tx.TX_AMOUNT > 60 {
+				nextTopic = fraudTopic
+			}
+
 			// back to a json string
 			data, err := json.Marshal(tx)
 			if err != nil {
@@ -88,7 +95,7 @@ func main() {
 			// send to the next destination
 			err = kp.Produce(&kafka.Message{
 				TopicPartition: kafka.TopicPartition{
-					Topic:     &targetTopic,
+					Topic:     &nextTopic,
 					Partition: kafka.PartitionAny,
 				},
 				Value: data,
