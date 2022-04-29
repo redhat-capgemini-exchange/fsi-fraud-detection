@@ -1,12 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/redhat-capgemini-exchange/fsi-fraud-detection/internal"
 	"github.com/txsvc/stdlib/v2/env"
 )
 
@@ -37,8 +36,8 @@ func main() {
 		panic(err)
 	}
 
-	sigchan := make(chan os.Signal, 1)
-	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
+	//sigchan := make(chan os.Signal, 1)
+	//signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
 	err = c.SubscribeTopics([]string{source}, nil)
 	if err != nil {
@@ -50,7 +49,10 @@ func main() {
 	for {
 		msg, err := c.ReadMessage(-1)
 		if err == nil {
-			fmt.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
+			var tx internal.Transaction
+			err = json.Unmarshal(msg.Value, &tx)
+
+			fmt.Printf(" ---> message on %s: %v\n", msg.TopicPartition, tx)
 		} else {
 			// The client will automatically try to recover from all errors.
 			fmt.Printf(" --> consumer error: %v (%v)\n", err, msg)
