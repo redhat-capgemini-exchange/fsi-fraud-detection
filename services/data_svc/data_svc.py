@@ -94,34 +94,23 @@ def prepare(tx):
 
 
 def transform(tx):
-    # convert from Timestamp to UTC seconds, otherwise json pukes 
+    # convert from Timestamp to UTC seconds, otherwise json pukes
     dt = tx['TX_DATETIME']
     utc_time = dt.replace(tzinfo=datetime.timezone.utc)
     tx['TX_DATETIME'] = int(utc_time.timestamp())
-    
-    # first 2 new features
-    #tx_dt = datetime.datetime.fromtimestamp(tx['TX_DATETIME']/1000)
-    #tx['TX_DURING_WEEKEND'] = is_weekend(tx_dt)
-    #tx['TX_DURING_NIGHT'] = is_night(tx_dt)
 
     # TX_FRAUD,TX_FRAUD_SCENARIO -> -1 i.e. we don't know ...
     tx['TX_FRAUD'] = -1
     tx['TX_FRAUD_SCENARIO'] = -1
 
-    # CUSTOMER_ID_NB_TX_1DAY_WINDOW,CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW,CUSTOMER_ID_NB_TX_7DAY_WINDOW,CUSTOMER_ID_AVG_AMOUNT_7DAY_WINDOW,CUSTOMER_ID_NB_TX_30DAY_WINDOW,CUSTOMER_ID_AVG_AMOUNT_30DAY_WINDOW,TERMINAL_ID_NB_TX_1DAY_WINDOW,TERMINAL_ID_RISK_1DAY_WINDOW,TERMINAL_ID_NB_TX_7DAY_WINDOW,TERMINAL_ID_RISK_7DAY_WINDOW,TERMINAL_ID_NB_TX_30DAY_WINDOW,TERMINAL_ID_RISK_30DAY_WINDOW
-    #tx['CUSTOMER_ID_NB_TX_1DAY_WINDOW'] = 0
-    #tx['CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW'] = 0
-    #tx['CUSTOMER_ID_NB_TX_7DAY_WINDOW'] = 0
-    #tx['CUSTOMER_ID_AVG_AMOUNT_7DAY_WINDOW'] = 0
-    #tx['CUSTOMER_ID_NB_TX_30DAY_WINDOW'] = 0
-    #tx['CUSTOMER_ID_AVG_AMOUNT_30DAY_WINDOW'] = 0
-
-    tx['TERMINAL_ID_NB_TX_1DAY_WINDOW'] = 0
-    tx['TERMINAL_ID_RISK_1DAY_WINDOW'] = 0
-    tx['TERMINAL_ID_NB_TX_7DAY_WINDOW'] = 0
-    tx['TERMINAL_ID_RISK_7DAY_WINDOW'] = 0
-    tx['TERMINAL_ID_NB_TX_30DAY_WINDOW'] = 0
-    tx['TERMINAL_ID_RISK_30DAY_WINDOW'] = 0
+    # Keep it out of the tx data as since we can't calculate it at this point in time
+    # The terminal risk can only be calculated once the fraud assessment has taken place.
+    #tx['TERMINAL_ID_NB_TX_1DAY_WINDOW'] = 0
+    #tx['TERMINAL_ID_RISK_1DAY_WINDOW'] = 0
+    #tx['TERMINAL_ID_NB_TX_7DAY_WINDOW'] = 0
+    #tx['TERMINAL_ID_RISK_7DAY_WINDOW'] = 0
+    #tx['TERMINAL_ID_NB_TX_30DAY_WINDOW'] = 0
+    #tx['TERMINAL_ID_RISK_30DAY_WINDOW'] = 0
 
     return tx
 
@@ -158,7 +147,7 @@ for msg in consumer:
     # transform the data
     tx1 = transform(tx0.to_dict(orient='records')[0])
 
-    # send it along
+    # send it to the tx topic
     producer.send(TARGET_TOPIC, value=tx1)
 
     # basic logging, because demo
