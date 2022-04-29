@@ -5,6 +5,9 @@ import pandas as pd
 from kafka import KafkaConsumer, KafkaProducer
 from json import loads, dumps
 
+import warnings
+warnings.filterwarnings("ignore")
+
 # KAFKA server config
 KAFKA_SVC = os.getenv('kafka_service')
 KAFKA_SVC_PORT = os.getenv('kafka_service_port')
