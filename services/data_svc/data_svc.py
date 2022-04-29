@@ -1,5 +1,6 @@
 import os
 import datetime
+import pandas as pd
 
 from kafka import KafkaConsumer, KafkaProducer
 from json import loads, dumps
@@ -80,14 +81,14 @@ def get_customer_spending_behaviour_features(customer_transactions, windows_size
 
 
 def prepare(tx):
-  tx_dt = datetime.datetime.fromisoformat(tx['TX_DATETIME'])
-  tx['TX_DATETIME'] = tx_dt
-  tx['TX_DURING_WEEKEND'] = is_weekend(tx_dt)
-  tx['TX_DURING_NIGHT'] = is_night(tx_dt)
+    tx_dt = datetime.datetime.fromisoformat(tx['TX_DATETIME'])
+    tx['TX_DATETIME'] = tx_dt
+    tx['TX_DURING_WEEKEND'] = is_weekend(tx_dt)
+    tx['TX_DURING_NIGHT'] = is_night(tx_dt)
 
-  return tx
+    return tx
 
-  
+
 def transform(tx):
     # first 2 new features
     #tx_dt = datetime.datetime.fromtimestamp(tx['TX_DATETIME']/1000)
@@ -139,11 +140,12 @@ for msg in consumer:
     tx_history = tx_history.append(prepare(tx), ignore_index=True)
 
     # calculate the spending behaviour in 1,7,30 time window
-    tx_spending = get_customer_spending_behaviour_features(tx_history[tx_history.CUSTOMER_ID==tx['CUSTOMER_ID']])
-    
+    tx_spending = get_customer_spending_behaviour_features(
+        tx_history[tx_history.CUSTOMER_ID == tx['CUSTOMER_ID']])
+
     # only the latest tx is relevant
-    tx0 = tx_spending[tx_spending.TRANSACTION_ID==tx['TRANSACTION_ID']]
-    
+    tx0 = tx_spending[tx_spending.TRANSACTION_ID == tx['TRANSACTION_ID']]
+
     # transform the data
     tx1 = transform(tx0.to_dict(orient='records')[0])
 
