@@ -18,7 +18,7 @@ spec:
       containers:
         - name: data-svc
           image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/fraud-detection:latest
+            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/data-svc:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:

@@ -4,7 +4,7 @@ items:
   - kind: BuildConfig
     apiVersion: build.openshift.io/v1
     metadata:
-      name: fraud-detection
+      name: data-svc
       labels:
         app: fsi-fraud-detection
         app.openshift.io/runtime: python
@@ -14,7 +14,7 @@ items:
         git:
           ref: main
           uri: "https://github.com/redhat-capgemini-exchange/fsi-fraud-detection"
-        contextDir: /services/fraud_detection
+        contextDir: /services/data_svc
         type: Git
       strategy:
         type: Source
@@ -27,7 +27,7 @@ items:
       output:
         to:
           kind: ImageStreamTag
-          name: fraud-detection:latest
+          name: data-svc:latest
       triggers:
         - type: GitHub
           github:
