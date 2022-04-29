@@ -12,7 +12,7 @@ items:
       runPolicy: Serial
       source:
         git:
-          ref: main
+          ref: develop
           uri: "https://github.com/redhat-capgemini-exchange/fsi-fraud-detection"
         contextDir: /services/data_svc
         type: Git
