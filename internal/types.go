@@ -76,5 +76,27 @@ var (
 func (tx *Transaction) ToArray() []string {
 	return []string{
 		fmt.Sprintf("%d", tx.TRANSACTION_ID),
+		fmt.Sprintf("%d", tx.TX_DATETIME),
+		fmt.Sprintf("%d", tx.CUSTOMER_ID),                         //"CUSTOMER_ID",
+		fmt.Sprintf("%d", tx.TERMINAL_ID),                         //"TERMINAL_ID",
+		fmt.Sprintf("%f", tx.TX_AMOUNT),                           //"TX_AMOUNT",
+		fmt.Sprintf("%d", tx.TX_TIME_SECONDS),                     //"TX_TIME_SECONDS",
+		fmt.Sprintf("%d", tx.TX_TIME_DAYS),                        //"TX_TIME_DAYS",
+		fmt.Sprintf("%d", tx.TX_FRAUD),                            //"TX_FRAUD",
+		fmt.Sprintf("%d", tx.TX_FRAUD_SCENARIO),                   //"TX_FRAUD_SCENARIO",
+		fmt.Sprintf("%d", tx.TX_DURING_WEEKEND),                   //"TX_DURING_WEEKEND",
+		fmt.Sprintf("%d", tx.TX_DURING_NIGHT),                     //"TX_DURING_NIGHT",
+		fmt.Sprintf("%f", tx.CUSTOMER_ID_NB_TX_1DAY_WINDOW),       //"CUSTOMER_ID_NB_TX_1DAY_WINDOW",
+		fmt.Sprintf("%f", tx.CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW),  //"CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW",
+		fmt.Sprintf("%f", tx.CUSTOMER_ID_NB_TX_7DAY_WINDOW),       //"CUSTOMER_ID_NB_TX_7DAY_WINDOW",
+		fmt.Sprintf("%f", tx.CUSTOMER_ID_AVG_AMOUNT_7DAY_WINDOW),  //"CUSTOMER_ID_AVG_AMOUNT_7DAY_WINDOW",
+		fmt.Sprintf("%f", tx.CUSTOMER_ID_NB_TX_30DAY_WINDOW),      //"CUSTOMER_ID_NB_TX_30DAY_WINDOW",
+		fmt.Sprintf("%f", tx.CUSTOMER_ID_AVG_AMOUNT_30DAY_WINDOW), //"CUSTOMER_ID_AVG_AMOUNT_30DAY_WINDOW",
+		fmt.Sprintf("%f", tx.TERMINAL_ID_NB_TX_1DAY_WINDOW),       //"TERMINAL_ID_NB_TX_1DAY_WINDOW",
+		fmt.Sprintf("%f", tx.TERMINAL_ID_RISK_1DAY_WINDOW),        //"TERMINAL_ID_RISK_1DAY_WINDOW",
+		fmt.Sprintf("%f", tx.TERMINAL_ID_NB_TX_7DAY_WINDOW),       //"TERMINAL_ID_NB_TX_7DAY_WINDOW",
+		fmt.Sprintf("%f", tx.TERMINAL_ID_RISK_7DAY_WINDOW),        //"TERMINAL_ID_RISK_7DAY_WINDOW",
+		fmt.Sprintf("%f", tx.TERMINAL_ID_NB_TX_30DAY_WINDOW),      //"TERMINAL_ID_NB_TX_30DAY_WINDOW",
+		fmt.Sprintf("%f", tx.TERMINAL_ID_RISK_30DAY_WINDOW),       //"TERMINAL_ID_RISK_30DAY_WINDOW",
 	}
 }

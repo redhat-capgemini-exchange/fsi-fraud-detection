@@ -61,7 +61,7 @@ func main() {
 	out, location := newFile(archiveLocation, archiveLocationPrefix)
 	writer := csv.NewWriter(out)
 	writer.Write(internal.ArchiveHeader)
-	batchSize := 100
+	batchSize := 1000
 	num := 0
 
 	fmt.Printf(" ---> archiving to %s\n", location)
