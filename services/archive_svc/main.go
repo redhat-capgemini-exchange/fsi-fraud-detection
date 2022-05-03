@@ -31,7 +31,7 @@ func main() {
 	groupID := env.GetString("group_id", "fsi-fraud-detection")
 
 	sourceTopic := env.GetString("source_topic", "tx-archive")
-	archiveLocation := env.GetString("target_location", "datalake")
+	archiveLocation := env.GetString("target_location", "/opt/app-root/data")
 	archiveLocationPrefix := env.GetString("target_prefix", "archive")
 
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md

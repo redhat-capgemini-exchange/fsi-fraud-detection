@@ -37,10 +37,10 @@ spec:
               value: 'archive_svc'
 
             - name: target_location
-              value: datalake
+              value: "/opt/app-root/data
             - name: target_prefix
               value: archive
           
           volumeMounts:
             - name: datalake-archive
-              mountPath: /opt/app-root/datalake
+              mountPath: /opt/app-root/data
