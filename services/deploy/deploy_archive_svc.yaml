@@ -15,10 +15,10 @@ spec:
       labels:
         app: fsi-fraud-detection
     spec:
-      #volumes:
-      #  - name: postgresql-data
-      #    persistentVolumeClaim:
-      #      claimName: postgresql
+      volumes:
+        - name: datalake-archive
+          persistentVolumeClaim:
+            claimName: datalake
       containers:
         - name: archive-svc
           image: >-
@@ -35,7 +35,12 @@ spec:
               value: 'archive_svc'
             - name: group_id
               value: 'archive_svc'
+
+            - name: target_location
+              value: datalake
+            - name: target_prefix
+              value: archive
           
-          #volumeMounts:
-          #  - name: postgresql-data
-          #    mountPath: /var/lib/pgsql/data
+          volumeMounts:
+            - name: datalake-archive
+              mountPath: /opt/app-root/datalake
