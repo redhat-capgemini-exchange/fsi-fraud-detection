@@ -31,7 +31,7 @@ config_system:
 	oc policy add-role-to-user \
 		system:image-puller system:serviceaccount:${DEV_NAMESPACE}:default \
     	--namespace=${BUILD_NAMESPACE}
-	oc apply -f services/deploy/pvc_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/pvc_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: deploy_kafka
 deploy_kafka:
@@ -42,27 +42,27 @@ deploy_kafka:
 
 .PHONY: apply_config
 apply_config:
-	oc apply -f services/deploy/config_fsi_fraud_detection.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f services/deploy/config_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/config_fsi_fraud_detection.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f deploy/config_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
 	oc apply -f secrets/build_secrets.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f secrets/deploy_secrets.yaml -n ${PROD_NAMESPACE}
 	
 .PHONY: apply_build
 apply_build:
-	oc apply -f services/deploy/images_fsi_fraud_detection.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f deploy/images_fsi_fraud_detection.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_golang_custom.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f services/deploy/build_topic_listener.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f services/deploy/build_data_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f services/deploy/build_archive_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f services/deploy/build_case_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f services/deploy/build_router_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/build_topic_listener.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/build_data_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/build_archive_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/build_case_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/build_router_svc.yaml -n ${BUILD_NAMESPACE}
 	
 .PHONY: apply_deploy
 apply_deploy:
-	oc apply -f services/deploy/deploy_archive_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f services/deploy/deploy_case_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f services/deploy/deploy_data_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f services/deploy/deploy_router_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/deploy_archive_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/deploy_case_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/deploy_data_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/deploy_router_svc.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: clean_builds
 clean_builds:
