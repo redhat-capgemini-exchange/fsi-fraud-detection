@@ -15,8 +15,12 @@ items:
           labels:
             app: simple-notebook
         spec:
+          volumes:
+            - name: datalake-archive
+              persistentVolumeClaim:
+                claimName: datalake
           containers:
-            - name: data-svc
+            - name: simple-notebook
               image: >-
                 image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/simple-notebook:latest
               env:
@@ -24,6 +28,10 @@ items:
                   value: "8080"
                 #- name: JUPYTER_PASSWORD
                 #  value: "openshift"
+              
+              volumeMounts:
+                - name: datalake-archive
+                  mountPath: '/opt/app-root/src/data/archive'
                   
               #envFrom:
               #  - configMapRef:
