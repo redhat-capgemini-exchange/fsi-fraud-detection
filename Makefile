@@ -51,7 +51,6 @@ apply_config:
 apply_build:
 	oc apply -f deploy/images_fsi_fraud_detection.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_golang_custom.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/build_topic_listener.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_data_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_archive_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_case_svc.yaml -n ${BUILD_NAMESPACE}
