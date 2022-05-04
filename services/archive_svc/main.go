@@ -64,7 +64,7 @@ func main() {
 	batchSize := 1000
 	num := 0
 
-	fmt.Printf(" ---> archiving to %s\n", location)
+	fmt.Printf(" --> archiving to %s\n", location)
 
 	for {
 		msg, err := kc.ReadMessage(-1)
@@ -85,7 +85,7 @@ func main() {
 				writer = csv.NewWriter(out)
 				writer.Write(internal.ArchiveHeader)
 
-				fmt.Printf(" ---> archiving to %s\n", location)
+				fmt.Printf(" --> archiving to %s\n", location)
 			}
 		} else {
 			// The client will automatically try to recover from all errors.
@@ -93,7 +93,6 @@ func main() {
 		}
 	}
 
-	//c.Close()
 }
 
 func newFile(path, prefix string) (*os.File, string) {
