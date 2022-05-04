@@ -26,9 +26,13 @@ items:
               env:
                 - name: JUPYTER_PORT
                   value: "8080"
-                #- name: JUPYTER_PASSWORD
-                #  value: "openshift"
-              
+              resources:
+                limits:
+                  cpu: '1'
+                  memory: 4Gi
+                requests:
+                  cpu: 500m
+                  memory: 2Gi
               volumeMounts:
                 - name: datalake-archive
                   mountPath: '/opt/app-root/src/data'
