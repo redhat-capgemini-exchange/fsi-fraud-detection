@@ -11,7 +11,8 @@ Setup of a basic MLOps demonstrator inspired by the "[Reproducible Machine Learn
 ### APIs and modules
 
 * [https://pkg.go.dev/github.com/confluentinc/confluent-kafka-go@v1.8.2/kafka](confluent-kafka-go )
-
+* [https://github.com/googleapis/python-storage](googleapis python-storage)
+* [https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-python](Cloud Storage client libraries)
 
 ### Local development
 

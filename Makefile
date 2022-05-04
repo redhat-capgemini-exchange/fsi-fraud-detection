@@ -35,6 +35,12 @@ deploy_kafka:
 	oc apply -f deploy/kafka-bridge.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/kafka-bridge-route.yaml -n ${PROD_NAMESPACE}
 
+.PHONY: deploy_minimal_notebook
+deploy_minimal_notebook:
+	oc create -f https://raw.githubusercontent.com/redhat-capgemini-exchange/jupyter-notebooks/develop/build-configs/s2i-minimal-notebook.json -n ${PROD_NAMESPACE}
+	oc new-app s2i-minimal-notebook:3.6 --name minimal-notebook --env JUPYTER_NOTEBOOK_PASSWORD=openshift -n ${PROD_NAMESPACE}
+	oc create route edge minimal-notebook --service minimal-notebook --insecure-policy Redirect -n ${PROD_NAMESPACE}
+
 .PHONY: apply_config
 apply_config:
 	oc apply -f services/deploy/config_fsi_fraud_detection.yaml -n ${BUILD_NAMESPACE}
