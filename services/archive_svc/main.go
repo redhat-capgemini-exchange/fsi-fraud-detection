@@ -72,7 +72,6 @@ func main() {
 			var tx internal.Transaction
 			err = json.Unmarshal(msg.Value, &tx)
 
-			//fmt.Printf(" ---> message on %s: %v\n", msg.TopicPartition, tx)
 			num++
 			writer.Write(tx.ToArray())
 
@@ -99,7 +98,15 @@ func main() {
 
 func newFile(path, prefix string) (*os.File, string) {
 	location := filepath.Join(path, prefix, timestampFileName())
-	out, err := os.Create(location)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err := os.Mkdir(path, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	fullPath := filepath.Join(location, timestampFileName())
+	out, err := os.Create(fullPath)
 	if err != nil {
 		panic(err)
 	}

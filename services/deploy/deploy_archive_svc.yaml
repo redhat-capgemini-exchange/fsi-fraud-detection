@@ -43,4 +43,4 @@ spec:
           
           volumeMounts:
             - name: datalake-archive
-              mountPath: '/opt/app-root/data/archive'
+              mountPath: '/opt/app-root/data'

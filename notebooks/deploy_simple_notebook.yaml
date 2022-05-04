@@ -31,7 +31,7 @@ items:
               
               volumeMounts:
                 - name: datalake-archive
-                  mountPath: '/opt/app-root/src/data/archive'
+                  mountPath: '/opt/app-root/src/data'
                   
               #envFrom:
               #  - configMapRef:
