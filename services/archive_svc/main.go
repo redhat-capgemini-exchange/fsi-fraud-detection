@@ -97,7 +97,7 @@ func main() {
 }
 
 func newFile(path, prefix string) (*os.File, string) {
-	location := filepath.Join(path, prefix, timestampFileName())
+	location := filepath.Join(path, prefix)
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		err := os.Mkdir(path, os.ModePerm)
 		if err != nil {
