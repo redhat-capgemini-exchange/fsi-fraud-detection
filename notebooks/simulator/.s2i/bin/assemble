@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -eo pipefail
+set -x
+
+echo " --> assembling the jupyter notebook"
+mkdir -p /opt/app-root/src/.jupyter
+pip install notebook==$NOTEBOOK_VERSION
+
+echo " --> falling back to the default assemble script"
+exec /usr/libexec/s2i/assemble
