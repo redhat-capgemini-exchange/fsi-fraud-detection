@@ -63,3 +63,7 @@ apply_deploy:
 	oc apply -f services/deploy/deploy_case_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f services/deploy/deploy_data_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f services/deploy/deploy_router_svc.yaml -n ${PROD_NAMESPACE}
+
+.PHONY: clean_builds
+clean_builds:
+	oc delete build --all -n ${BUILD_NAMESPACE}

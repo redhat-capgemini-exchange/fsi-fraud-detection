@@ -101,6 +101,7 @@ func newFile(path, prefix string) (*os.File, string) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		err := os.Mkdir(path, os.ModePerm)
 		if err != nil {
+			fmt.Println(err)
 			panic(err)
 		}
 	}
@@ -108,6 +109,7 @@ func newFile(path, prefix string) (*os.File, string) {
 	fullPath := filepath.Join(location, timestampFileName())
 	out, err := os.Create(fullPath)
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 	return out, location
