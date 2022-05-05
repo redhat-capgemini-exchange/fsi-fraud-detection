@@ -3,8 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/txsvc/stdlib/v2/env"
 
 	"github.com/redhat-capgemini-exchange/fsi-fraud-detection/internal"
@@ -25,6 +31,21 @@ func main() {
 	sourceTopic := env.GetString("source_topic", "tx-fraud")
 	targetTopic := env.GetString("target_topic", "tx-archive")
 
+	// prometheus setup
+	promHost := env.GetString("prom_host", "0.0.0.0:2112")
+	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
+
+	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
+		Name: "fraud_case_svc_txs",
+		Help: "The number of processed transactions",
+	})
+
+	// start the metrics listener
+	go func() {
+		http.Handle(promMetricsPath, promhttp.Handler())
+		http.ListenAndServe(promHost, nil)
+	}()
+
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":       kafkaServer,
@@ -44,9 +65,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	//sigchan := make(chan os.Signal, 1)
-	//signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
 	err = kc.SubscribeTopics([]string{sourceTopic}, nil)
 	if err != nil {
@@ -96,6 +114,9 @@ func main() {
 			if err != nil {
 				fmt.Printf(" --> producer error: %v\n", err)
 			}
+
+			// metrics
+			opsTxProcessed.Inc()
 
 		} else {
 			// The client will automatically try to recover from all errors.

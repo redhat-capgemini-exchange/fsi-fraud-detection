@@ -1,46 +1,79 @@
-apiVersion: apps.openshift.io/v1
-kind: DeploymentConfig
-metadata:
-  name: archive-svc
-  labels:
-    svc: archive-svc
-    app: fsi-fraud-detection
-    app.openshift.io/runtime: golang
-spec:
-  selector:
-    app: fsi-fraud-detection
-  replicas: 1
-  template:
+apiVersion: v1
+kind: List
+items:
+  - kind: DeploymentConfig
+    apiVersion: apps.openshift.io/v1
+    metadata:
+      name: archive-svc
+      labels:
+        svc: archive-svc
+        app: archive-svc
+        app.openshift.io/runtime: golang
+    spec:
+      selector:
+        app: archive-svc
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: archive-svc
+        spec:
+          volumes:
+            - name: datalake-archive
+              persistentVolumeClaim:
+                claimName: datalake
+          containers:
+            - name: archive-svc
+              image: >-
+                image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/archive-svc:latest
+              imagePullPolicy: Always
+              envFrom:
+                - configMapRef:
+                    name: fsi-fraud-detection-config
+              env:
+                - name: source_topic
+                  value: "tx-archive"
+
+                - name: client_id
+                  value: "archive_svc"
+                - name: group_id
+                  value: "archive_svc"
+
+                - name: target_location
+                  value: "/opt/app-root/data"
+                - name: target_prefix
+                  value: audit
+
+              volumeMounts:
+                - name: datalake-archive
+                  mountPath: "/opt/app-root/data"
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: metrics-archive-svc
+    spec:
+      ports:
+        - protocol: TCP
+          port: 21120
+          targetPort: 2112
+          name: metrics-archive
+      selector:
+        app: archive-svc
+      type: ClusterIP
+
+  - kind: ServiceMonitor
+    apiVersion: monitoring.coreos.com/v1
     metadata:
       labels:
-        app: fsi-fraud-detection
+        k8s-app: archive-svc
+      name: monitor-archive-svc
     spec:
-      volumes:
-        - name: datalake-archive
-          persistentVolumeClaim:
-            claimName: datalake
-      containers:
-        - name: archive-svc
-          image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/archive-svc:latest
-          imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: fsi-fraud-detection-config
-          env:
-            - name: source_topic
-              value: 'tx-archive'
-            
-            - name: client_id
-              value: 'archive_svc'
-            - name: group_id
-              value: 'archive_svc'
-
-            - name: target_location
-              value: '/opt/app-root/data'
-            - name: target_prefix
-              value: audit
-          
-          volumeMounts:
-            - name: datalake-archive
-              mountPath: '/opt/app-root/data'
+      endpoints:
+        - interval: 30s
+          path: "/metrics"
+          port: metrics-archive
+          scheme: http
+      selector:
+        matchLabels:
+          app: archive-svc

@@ -1,43 +1,76 @@
-apiVersion: apps.openshift.io/v1
-kind: DeploymentConfig
-metadata:
-  name: router-svc
-  labels:
-    svc: router-svc
-    app: fsi-fraud-detection
-    app.openshift.io/runtime: golang
-spec:
-  selector:
-    app: fsi-fraud-detection
-  replicas: 1
-  template:
+apiVersion: v1
+kind: List
+items:
+  - kind: DeploymentConfig
+    apiVersion: apps.openshift.io/v1
+    metadata:
+      name: router-svc
+      labels:
+        svc: router-svc
+        app: router-svc
+        app.openshift.io/runtime: golang
+    spec:
+      selector:
+        app: router-svc
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: router-svc
+        spec:
+          containers:
+            - name: router-svc
+              image: >-
+                image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/router-svc:latest
+              imagePullPolicy: Always
+              envFrom:
+                - configMapRef:
+                    name: fsi-fraud-detection-config
+              env:
+                - name: source_topic
+                  value: 'tx'
+                  
+                - name: archive_topic
+                  value: 'tx-archive'
+                - name: fraud_topic
+                  value: 'tx-fraud'
+
+                - name: rules_app_svc
+                  value: "http://rules-app-svc.fsi-fraud-detection.svc.cluster.local:8080/validate"
+                - name: fraud_app_svc
+                  value: "http://fraud-app-svc.fsi-fraud-detection.svc.cluster.local:8080/predict"
+
+                - name: client_id
+                  value: 'router_svc'
+                - name: group_id
+                  value: 'router_svc'
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: metrics-router-svc
+    spec:
+      ports:
+        - protocol: TCP
+          port: 21122
+          targetPort: 2112
+          name: metrics-router
+      selector:
+        app: router-svc
+      type: ClusterIP
+
+  - kind: ServiceMonitor
+    apiVersion: monitoring.coreos.com/v1
     metadata:
       labels:
-        app: fsi-fraud-detection
+        k8s-app: router-svc
+      name: monitor-router-svc
     spec:
-      containers:
-        - name: router-svc
-          image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/router-svc:latest
-          imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: fsi-fraud-detection-config
-          env:
-            - name: source_topic
-              value: 'tx'
-              
-            - name: archive_topic
-              value: 'tx-archive'
-            - name: fraud_topic
-              value: 'tx-fraud'
-
-            - name: rules_app_svc
-              value: "http://rules-app-svc.fsi-fraud-detection.svc.cluster.local:8080/validate"
-            - name: fraud_app_svc
-              value: "http://fraud-app-svc.fsi-fraud-detection.svc.cluster.local:8080/predict"
-
-            - name: client_id
-              value: 'router_svc'
-            - name: group_id
-              value: 'router_svc'
+      endpoints:
+        - interval: 30s
+          path: "/metrics"
+          port: metrics-router
+          scheme: http
+      selector:
+        matchLabels:
+          app: router-svc

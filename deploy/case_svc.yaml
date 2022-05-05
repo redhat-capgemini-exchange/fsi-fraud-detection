@@ -1,35 +1,68 @@
-apiVersion: apps.openshift.io/v1
-kind: DeploymentConfig
-metadata:
-  name: case-svc
-  labels:
-    svc: case-svc
-    app: fsi-fraud-detection
-    app.openshift.io/runtime: golang
-spec:
-  selector:
-    app: fsi-fraud-detection
-  replicas: 1
-  template:
+apiVersion: v1
+kind: List
+items:
+  - kind: DeploymentConfig
+    apiVersion: apps.openshift.io/v1
+    metadata:
+      name: case-svc
+      labels:
+        svc: case-svc
+        app: case-svc
+        app.openshift.io/runtime: golang
+    spec:
+      selector:
+        app: case-svc
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: case-svc
+        spec:
+          containers:
+            - name: case-svc
+              image: >-
+                image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/case-svc:latest
+              imagePullPolicy: Always
+              envFrom:
+                - configMapRef:
+                    name: fsi-fraud-detection-config
+              env:
+                - name: source_topic
+                  value: 'tx-fraud'
+                - name: target_topic
+                  value: 'tx-archive'
+                  
+                - name: client_id
+                  value: 'case_svc'
+                - name: group_id
+                  value: 'case_svc'
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: metrics-archive-svc
+    spec:
+      ports:
+        - protocol: TCP
+          port: 21121
+          targetPort: 2112
+          name: metrics-case
+      selector:
+        app: case-svc
+      type: ClusterIP
+
+  - kind: ServiceMonitor
+    apiVersion: monitoring.coreos.com/v1
     metadata:
       labels:
-        app: fsi-fraud-detection
+        k8s-app: case-svc
+      name: monitor-case-svc
     spec:
-      containers:
-        - name: case-svc
-          image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/case-svc:latest
-          imagePullPolicy: Always
-          envFrom:
-            - configMapRef:
-                name: fsi-fraud-detection-config
-          env:
-            - name: source_topic
-              value: 'tx-fraud'
-            - name: target_topic
-              value: 'tx-archive'
-              
-            - name: client_id
-              value: 'case_svc'
-            - name: group_id
-              value: 'case_svc'
+      endpoints:
+        - interval: 30s
+          path: "/metrics"
+          port: metrics-case
+          scheme: http
+      selector:
+        matchLabels:
+          app: case-svc

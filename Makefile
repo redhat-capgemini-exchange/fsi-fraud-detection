@@ -36,10 +36,15 @@ config_system:
 
 .PHONY: deploy_kafka
 deploy_kafka:
-	oc apply -f deploy/kafka.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/kafka-topics.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/kafka-bridge.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/kafka-bridge-route.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/kafka/kafka.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/kafka/kafka-topics.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/kafka/kafka-bridge.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/kafka/kafka-bridge-route.yaml -n ${PROD_NAMESPACE}
+
+.PHONY: deploy_monitoring
+deploy_monitoring:
+	oc apply -f deploy/monitoring/cluster-monitoring-config.yaml
+	oc apply -f deploy/monitoring/user-workload-monitoring-config.yaml
 
 .PHONY: apply_config
 apply_config:
