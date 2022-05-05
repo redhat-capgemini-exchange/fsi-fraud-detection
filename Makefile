@@ -10,6 +10,7 @@ prepare_build: apply_config apply_build prepare_notebooks
 
 .PHONY: prepare_notebooks
 prepare_notebooks:
+	oc apply -f notebooks/notebook_secrets.yaml -n ${PROD_NAMESPACE}
 	oc apply -f notebooks/build_simulator_notebook.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
 
