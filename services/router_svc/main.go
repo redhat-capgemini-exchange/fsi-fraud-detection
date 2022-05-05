@@ -90,7 +90,7 @@ func main() {
 				continue // FIXME skipping this transaction, what else?
 			}
 
-			// check 2: ML model incase the rules engine passed the TX
+			// check 2: ML model in case the rules engine passed the TX
 			if resp.TX_FRAUD == 0 {
 				if err := internal.PostJSON(fraudAppEndpoint, &tx, &resp); err != nil {
 					fmt.Printf(" --> ML error: %v\n", err)
@@ -103,6 +103,10 @@ func main() {
 				nextTopic = fraudTopic
 				tx.TX_FRAUD = resp.TX_FRAUD
 				tx.TX_FRAUD_SCENARIO = resp.TX_FRAUD_SCENARIO
+			} else {
+				// TX seems to be OK, clear the fraud flags
+				tx.TX_FRAUD = 0
+				tx.TX_FRAUD_SCENARIO = 0
 			}
 
 			if tx.TX_FRAUD > 0 {
@@ -112,7 +116,8 @@ func main() {
 			// back to a json string
 			data, err := json.Marshal(tx)
 			if err != nil {
-				// do something
+				fmt.Printf(" --> json error: %v\n", err)
+				continue // FIXME skipping this transaction, what else?
 			}
 
 			// send to the next destination
