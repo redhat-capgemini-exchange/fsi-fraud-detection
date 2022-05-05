@@ -26,8 +26,8 @@ func main() {
 	archiveTopic := env.GetString("archive_topic", "tx-archive")
 	fraudTopic := env.GetString("fraud_topic", "tx-fraud")
 
-	rulesAppEndpoint := env.GetString("rules_app_svc", "http://rules-app-svc.fsi-fraud-detection.svc.cluster.local:8080")
-	//fraudAppEndpoint := env.GetString("fraud_app_svc", "http://fraud-app-svc.fsi-fraud-detection.svc.cluster.local:8080")
+	rulesAppEndpoint := env.GetString("rules_app_svc", "http://rules-app-svc.fsi-fraud-detection.svc.cluster.local:8080/validate")
+	//fraudAppEndpoint := env.GetString("fraud_app_svc", "http://fraud-app-svc.fsi-fraud-detection.svc.cluster.local:8080/validate")
 
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
@@ -87,17 +87,18 @@ func main() {
 			var resp internal.Transaction
 			if err := internal.PostJSON(rulesAppEndpoint, &tx, &resp); err != nil {
 				fmt.Printf(" --> rules error: %v\n", err)
-				continue // skipping this transaction
+				continue // FIXME skipping this transaction, what else?
 			}
 
+			// check 2: ML model
+			// TBD
+
+			// decide on the target topic based on TX_FRAUD
 			if resp.TX_FRAUD > 0 {
 				nextTopic = fraudTopic
 				tx.TX_FRAUD = resp.TX_FRAUD
 				tx.TX_FRAUD_SCENARIO = resp.TX_FRAUD_SCENARIO
 			}
-
-			// check 2: ML model
-			// TBD
 
 			if tx.TX_FRAUD > 0 {
 				fmt.Printf(" ---> fraudulent TX %d: %v\n", tx.TRANSACTION_ID, tx)

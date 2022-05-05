@@ -33,9 +33,9 @@ spec:
               value: 'tx-fraud'
 
             - name: rules_app_svc
-              value: "http://rules-app-svc.fsi-fraud-detection.svc.cluster.local:8080"
+              value: "http://rules-app-svc.fsi-fraud-detection.svc.cluster.local:8080/validate"
             - name: fraud_app_svc
-              value: "http://fraud-app-svc.fsi-fraud-detection.svc.cluster.local:8080"
+              value: "http://fraud-app-svc.fsi-fraud-detection.svc.cluster.local:8080/predict"
 
             - name: client_id
               value: 'router_svc'

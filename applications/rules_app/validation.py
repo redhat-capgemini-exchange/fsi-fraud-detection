@@ -5,10 +5,6 @@ TX_FRAUD_SCENARIO = int(os.getenv('tx_fraud_scenario'))
 
 
 def validate(args_dict):
-
-    # FIXME remove after debugging
-    print(args_dict)
-
     fraud = 0
     scenario = -1
 
@@ -16,7 +12,8 @@ def validate(args_dict):
     if amount > TX_FRAUD_THRESHOLD:
         fraud = 1
         scenario = TX_FRAUD_SCENARIO
-        print(f" --> potential fraudulent tx '{args_dict.get('TRANSACTION_ID')}', amount={amount}")
+        print(
+            f" --> potential fraudulent tx '{args_dict.get('TRANSACTION_ID')}', amount={amount}")
 
     return {
         'TRANSACTION_ID': args_dict.get('TRANSACTION_ID'),
