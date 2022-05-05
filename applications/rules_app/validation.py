@@ -6,6 +6,9 @@ TX_FRAUD_SCENARIO = int(os.getenv('tx_fraud_scenario'))
 
 def validate(args_dict):
 
+    # FIXME remove after debugging
+    print(args_dict)
+
     fraud = 0
     scenario = -1
 
