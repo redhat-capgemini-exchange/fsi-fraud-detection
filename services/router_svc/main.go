@@ -26,6 +26,9 @@ func main() {
 	archiveTopic := env.GetString("archive_topic", "tx-archive")
 	fraudTopic := env.GetString("fraud_topic", "tx-fraud")
 
+	rulesAppEndpoint := env.GetString("rules_app_svc", "http://rules-app-svc.fsi-fraud-detection.svc.cluster.local:8080")
+	//fraudAppEndpoint := env.GetString("fraud_app_svc", "http://fraud-app-svc.fsi-fraud-detection.svc.cluster.local:8080")
+
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":       kafkaServer,
@@ -75,15 +78,29 @@ func main() {
 	for {
 		msg, err := kc.ReadMessage(-1)
 		if err == nil {
+			nextTopic := archiveTopic
+
 			var tx internal.Transaction
 			err = json.Unmarshal(msg.Value, &tx)
 
-			fmt.Printf(" ---> message on %s: %v\n", msg.TopicPartition, tx)
+			// check 1: rules engine
+			var resp internal.Transaction
+			if err := internal.PostJSON(rulesAppEndpoint, &tx, &resp); err != nil {
+				fmt.Printf(" --> rules error: %v\n", err)
+				continue // skipping this transaction
+			}
 
-			// FIXME this is just a simple dummy routing
-			nextTopic := archiveTopic
-			if tx.TX_AMOUNT > 60 {
+			if resp.TX_FRAUD > 0 {
 				nextTopic = fraudTopic
+				tx.TX_FRAUD = resp.TX_FRAUD
+				tx.TX_FRAUD_SCENARIO = resp.TX_FRAUD_SCENARIO
+			}
+
+			// check 2: ML model
+			// TBD
+
+			if tx.TX_FRAUD > 0 {
+				fmt.Printf(" ---> fraudulent TX %d: %v\n", tx.TRANSACTION_ID, tx)
 			}
 
 			// back to a json string
