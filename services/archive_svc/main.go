@@ -42,13 +42,15 @@ func main() {
 	archiveLocationPrefix := env.GetString("target_prefix", "audit")
 
 	// prometheus setup
-	promHost := env.GetString("prom_host", ":2112")
+	promHost := env.GetString("prom_host", "0.0.0.0:2112")
 	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
 
 	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
 		Name: "fraud_archive_svc_txs",
 		Help: "The number of processed transactions",
 	})
+
+	// start the metrics listener
 	go func() {
 		http.Handle(promMetricsPath, promhttp.Handler())
 		http.ListenAndServe(promHost, nil)

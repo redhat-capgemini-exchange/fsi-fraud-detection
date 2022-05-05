@@ -35,6 +35,8 @@ COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 RUN chown -R 1001:0 $STI_SCRIPTS_PATH && chown -R 1001:0 $APP_ROOT
 
 USER 1001
+EXPOSE 8080
+EXPOSE 2112
 
 # Set the default CMD to print the usage of the language image.
 CMD $STI_SCRIPTS_PATH/usage
