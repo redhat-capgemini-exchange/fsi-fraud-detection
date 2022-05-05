@@ -49,19 +49,22 @@ apply_config:
 	
 .PHONY: apply_build
 apply_build:
-	oc apply -f builder/build_golang_custom.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/build_data_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/build_case_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/build_router_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/build_rules_app.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/build_archive_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/golang_custom.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/data_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/case_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/router_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/rules_app.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/fraud_app.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/archive_svc.yaml -n ${BUILD_NAMESPACE}
 	
 .PHONY: apply_deploy
 apply_deploy:
-	oc apply -f deploy/deploy_archive_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/deploy_case_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/deploy_data_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/deploy_router_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/archive_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/case_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/data_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/router_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/rules_app.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/fraud_app.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: cleanup
 cleanup:
