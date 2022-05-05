@@ -4,11 +4,17 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/txsvc/stdlib/v2/env"
 
 	"github.com/redhat-capgemini-exchange/fsi-fraud-detection/internal"
@@ -20,6 +26,7 @@ const (
 
 func main() {
 
+	// kafka setup
 	kafkaService := env.GetString("kafka_service", "")
 	if kafkaService == "" {
 		panic(fmt.Errorf("missing env 'kafka_service'"))
@@ -34,6 +41,19 @@ func main() {
 	archiveLocation := env.GetString("target_location", "/opt/app-root/data")
 	archiveLocationPrefix := env.GetString("target_prefix", "audit")
 
+	// prometheus setup
+	promHost := env.GetString("prom_host", ":2112")
+	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
+
+	opsArchived := promauto.NewCounter(prometheus.CounterOpts{
+		Name: "fraud.archive_svc.archived",
+		Help: "The number of archived transactions",
+	})
+	go func() {
+		http.Handle(promMetricsPath, promhttp.Handler())
+		http.ListenAndServe(promHost, nil)
+	}()
+
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":       kafkaServer,
@@ -46,9 +66,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	//sigchan := make(chan os.Signal, 1)
-	//signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
 	err = kc.SubscribeTopics([]string{sourceTopic}, nil)
 	if err != nil {
@@ -71,10 +88,13 @@ func main() {
 		if err == nil {
 			var tx internal.Transaction
 			err = json.Unmarshal(msg.Value, &tx)
-
-			num++
 			writer.Write(tx.ToArray())
 
+			// metrics
+			num++
+			opsArchived.Inc()
+
+			// start a new file every ... tx
 			if num%batchSize == 0 {
 				// close-of the current file
 				writer.Flush()
