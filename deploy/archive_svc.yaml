@@ -55,7 +55,7 @@ items:
     spec:
       ports:
         - protocol: TCP
-          port: 21120
+          port: 2112
           targetPort: 2112
           name: metrics-archive
       selector:

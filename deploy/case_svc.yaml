@@ -40,11 +40,11 @@ items:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: metrics-archive-svc
+      name: metrics-case-svc
     spec:
       ports:
         - protocol: TCP
-          port: 21121
+          port: 2112
           targetPort: 2112
           name: metrics-case
       selector:
