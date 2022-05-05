@@ -45,9 +45,9 @@ func main() {
 	promHost := env.GetString("prom_host", ":2112")
 	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
 
-	opsArchived := promauto.NewCounter(prometheus.CounterOpts{
-		Name: "fraud.archive_svc.archived",
-		Help: "The number of archived transactions",
+	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
+		Name: "fraud_archive_svc_txs",
+		Help: "The number of processed transactions",
 	})
 	go func() {
 		http.Handle(promMetricsPath, promhttp.Handler())
@@ -92,7 +92,7 @@ func main() {
 
 			// metrics
 			num++
-			opsArchived.Inc()
+			opsTxProcessed.Inc()
 
 			// start a new file every ... tx
 			if num%batchSize == 0 {
