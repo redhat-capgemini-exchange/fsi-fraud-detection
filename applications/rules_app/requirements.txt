@@ -1,0 +1,16 @@
+Flask
+gunicorn
+# ML & analytics
+numpy==1.22.2
+scipy==1.8.0
+pandas==1.4.1 
+scikit-learn==1.0.2 
+xgboost==1.5.2
+# infra
+pyarrow==7.0.0
+boto3==1.21.13
+kafka-python==2.0.2
+google-cloud-storage==2.3.0
+# coding support
+cloudpickle==2.0.0 
+requests==2.27.1

@@ -63,6 +63,8 @@ apply_deploy:
 	oc apply -f deploy/deploy_data_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/deploy_router_svc.yaml -n ${PROD_NAMESPACE}
 
-.PHONY: clean_builds
-clean_builds:
+.PHONY: cleanup
+cleanup:
 	oc delete build --all -n ${BUILD_NAMESPACE}
+	oc delete pod --field-selector=status.phase==Succeeded -n ${BUILD_NAMESPACE}
+	oc delete pod --field-selector=status.phase==Succeeded -n ${PROD_NAMESPACE}
