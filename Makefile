@@ -49,12 +49,12 @@ apply_config:
 	
 .PHONY: apply_build
 apply_build:
-	oc apply -f deploy/images_fsi_fraud_detection.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_golang_custom.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_data_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/build_archive_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_case_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_router_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/build_rules_app.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/build_archive_svc.yaml -n ${BUILD_NAMESPACE}
 	
 .PHONY: apply_deploy
 apply_deploy:

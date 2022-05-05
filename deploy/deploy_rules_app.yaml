@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: DeploymentConfig
+    apiVersion: apps.openshift.io/v1
+    metadata:
+      name: rules-app
+      labels:
+        svc: rules-app
+        app.openshift.io/runtime: python
+    spec:
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            app: rules-app
+        spec:
+          containers:
+            - name: rules-app
+              image: >-
+                image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/rules-app:latest
+              env:
+                - name: tx_fraud_threshold
+                  value: "220.0"
+                - name: tx_fraud_scenario
+                  value: "1"
+
+              #resources:
+              #  limits:
+              #    cpu: "2"
+              #    memory: 8Gi
+              #  requests:
+              #    cpu: "1"
+              #    memory: 4Gi
+              #envFrom:
+              #  - configMapRef:
+              #      name: fsi-fraud-detection-config
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: rules-app-svc
+    spec:
+      ports:
+        - protocol: TCP
+          port: 8080
+          targetPort: 8080
+      selector:
+        app: rules-app
+
+  - kind: Route
+    apiVersion: route.openshift.io/v1
+    metadata:
+      name: validate
+    spec:
+      to:
+        kind: Service
+        name: rules-app-svc
+        weight: 100
+      port:
+        targetPort: 8080
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
+      wildcardPolicy: None

@@ -37,3 +37,12 @@ items:
           imageChange: {}
         - type: ConfigChange
 
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
+      name: data-svc
+      labels:
+        app: fsi-fraud-detection
+        app.openshift.io/runtime: python
+      annotations:
+        description: data-svc services image

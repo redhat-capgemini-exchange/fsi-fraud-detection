@@ -1,6 +1,6 @@
 import json
 from flask import Flask, jsonify, request
-from prediction import predict
+from validation import validate
 
 application = Flask(__name__)
 
