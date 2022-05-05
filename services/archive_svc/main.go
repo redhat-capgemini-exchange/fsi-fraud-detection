@@ -109,7 +109,7 @@ func newFile(path, prefix string) (*os.File, string) {
 	if err != nil {
 		panic(err)
 	}
-	return out, location
+	return out, fullPath
 }
 
 func timestampFileName() string {
