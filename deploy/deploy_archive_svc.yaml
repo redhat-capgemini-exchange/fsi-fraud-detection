@@ -39,7 +39,7 @@ spec:
             - name: target_location
               value: '/opt/app-root/data'
             - name: target_prefix
-              value: archive
+              value: audit
           
           volumeMounts:
             - name: datalake-archive

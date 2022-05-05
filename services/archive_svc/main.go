@@ -32,7 +32,7 @@ func main() {
 
 	sourceTopic := env.GetString("source_topic", "tx-archive")
 	archiveLocation := env.GetString("target_location", "/opt/app-root/data")
-	archiveLocationPrefix := env.GetString("target_prefix", "archive")
+	archiveLocationPrefix := env.GetString("target_prefix", "audit")
 
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
