@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: BuildConfig
+    apiVersion: build.openshift.io/v1
+    metadata:
+      name: fraud-app
+      labels:
+        app: fsi-fraud-detection
+        app.openshift.io/runtime: python
+    spec:
+      runPolicy: Serial
+      source:
+        git:
+          ref: develop
+          uri: "https://github.com/redhat-capgemini-exchange/fsi-fraud-detection"
+        contextDir: /applications/fraud_app
+        type: Git
+      strategy:
+        type: Source
+        sourceStrategy:
+          from:
+            kind: ImageStreamTag
+            name: "python:3.9-ubi8"
+            namespace: openshift
+          env: []
+      output:
+        to:
+          kind: ImageStreamTag
+          name: fraud-app:latest
+      triggers:
+        - type: GitHub
+          github:
+            secretReference:
+              name: fsi-fraud-detection-xops-secrets
+        - type: ImageChange
+          imageChange: {}
+        - type: ConfigChange
+
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
+      name: fraud-app
+      labels:
+        app: fsi-fraud-detection
+        app.openshift.io/runtime: python
+      annotations:
+        description: fraud-app services image
