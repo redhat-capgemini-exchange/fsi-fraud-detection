@@ -9,8 +9,8 @@ from simulator.transformer import *
 START_DATE = "2020-04-01"
 END_DATE = "2020-04-30"
 
-DIR_INPUT = "./simulated-data/pkl/"
-DIR_OUTPUT = "./simulated-data/training/"
+DIR_INPUT = "./data/simulated/pkl/"
+DIR_OUTPUT = "./data/training/"
 
 # read the raw transaction data
 transactions_df = read_from_files(DIR_INPUT, START_DATE, END_DATE)

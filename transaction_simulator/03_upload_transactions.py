@@ -88,7 +88,7 @@ def setup():
     )
     parser.add_argument(
         '--dir',
-        default='./simulated-data/pkl/'
+        default='./data/simulated/pkl/'
     )
     parser.add_argument(
         '--batch-size',
