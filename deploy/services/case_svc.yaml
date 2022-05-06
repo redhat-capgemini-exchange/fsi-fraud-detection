@@ -7,16 +7,19 @@ items:
       name: case-svc
       labels:
         svc: case-svc
-        app: case-svc
         app.openshift.io/runtime: golang
+        group: integration-svc
+        collect_metrics: "true"
     spec:
       selector:
-        app: case-svc
+        svc: case-svc
       replicas: 1
       template:
         metadata:
           labels:
-            app: case-svc
+            svc: case-svc
+            group: integration-svc
+            collect_metrics: "true"
         spec:
           containers:
             - name: case-svc
@@ -28,14 +31,14 @@ items:
                     name: fsi-fraud-detection-config
               env:
                 - name: source_topic
-                  value: 'tx-fraud'
+                  value: "tx-fraud"
                 - name: target_topic
-                  value: 'tx-archive'
-                  
+                  value: "tx-archive"
+
                 - name: client_id
-                  value: 'case_svc'
+                  value: "case_svc"
                 - name: group_id
-                  value: 'case_svc'
+                  value: "case_svc"
 
   - kind: Service
     apiVersion: v1
@@ -46,23 +49,7 @@ items:
         - protocol: TCP
           port: 2112
           targetPort: 2112
-          name: metrics-case
+          name: metrics
       selector:
-        app: case-svc
+        svc: case-svc
       type: ClusterIP
-
-  - kind: ServiceMonitor
-    apiVersion: monitoring.coreos.com/v1
-    metadata:
-      labels:
-        k8s-app: case-svc
-      name: monitor-case-svc
-    spec:
-      endpoints:
-        - interval: 30s
-          path: "/metrics"
-          port: metrics-case
-          scheme: http
-      selector:
-        matchLabels:
-          app: case-svc

@@ -6,14 +6,16 @@ items:
     metadata:
       name: fraud-app
       labels:
-        svc: fraud-app
+        app: fraud-app
         app.openshift.io/runtime: python
+        group: backend-apps
     spec:
       replicas: 1
       template:
         metadata:
           labels:
             app: fraud-app
+            group: backend-apps
         spec:
           containers:
             - name: fraud-app
@@ -41,6 +43,7 @@ items:
         - protocol: TCP
           port: 8080
           targetPort: 8080
+          name: api
       selector:
         app: fraud-app
 

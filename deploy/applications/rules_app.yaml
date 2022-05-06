@@ -8,12 +8,14 @@ items:
       labels:
         svc: rules-app
         app.openshift.io/runtime: python
+        group: backend-apps
     spec:
       replicas: 1
       template:
         metadata:
           labels:
             app: rules-app
+            group: backend-apps
         spec:
           containers:
             - name: rules-app
@@ -45,6 +47,7 @@ items:
         - protocol: TCP
           port: 8080
           targetPort: 8080
+          name: api
       selector:
         app: rules-app
 

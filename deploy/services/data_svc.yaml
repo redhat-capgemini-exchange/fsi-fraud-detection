@@ -4,16 +4,17 @@ metadata:
   name: data-svc
   labels:
     svc: data-svc
-    app: data-svc
     app.openshift.io/runtime: python
+    group: integration-svc
 spec:
   selector:
-    app: data-svc
+    svc: data-svc
   replicas: 1
   template:
     metadata:
       labels:
-        app: data-svc
+        svc: data-svc
+        group: integration-svc
     spec:
       containers:
         - name: data-svc

@@ -7,16 +7,19 @@ items:
       name: archive-svc
       labels:
         svc: archive-svc
-        app: archive-svc
         app.openshift.io/runtime: golang
+        group: integration-svc
+        collect_metrics: "true"
     spec:
       selector:
-        app: archive-svc
+        svc: archive-svc
       replicas: 1
       template:
         metadata:
           labels:
-            app: archive-svc
+            svc: archive-svc
+            group: integration-svc
+            collect_metrics: "true"
         spec:
           volumes:
             - name: datalake-archive
@@ -57,23 +60,7 @@ items:
         - protocol: TCP
           port: 2112
           targetPort: 2112
-          name: metrics-archive
+          name: metrics
       selector:
-        app: archive-svc
+        svc: archive-svc
       type: ClusterIP
-
-  - kind: ServiceMonitor
-    apiVersion: monitoring.coreos.com/v1
-    metadata:
-      labels:
-        k8s-app: archive-svc
-      name: monitor-archive-svc
-    spec:
-      endpoints:
-        - interval: 30s
-          path: "/metrics"
-          port: metrics-archive
-          scheme: http
-      selector:
-        matchLabels:
-          app: archive-svc

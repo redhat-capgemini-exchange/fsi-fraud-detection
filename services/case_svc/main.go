@@ -36,7 +36,7 @@ func main() {
 	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
 
 	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
-		Name: "fraud_case_svc_txs",
+		Name: "fraud_processed_transactions",
 		Help: "The number of processed transactions",
 	})
 

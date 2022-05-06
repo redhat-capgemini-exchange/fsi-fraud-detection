@@ -7,16 +7,19 @@ items:
       name: router-svc
       labels:
         svc: router-svc
-        app: router-svc
         app.openshift.io/runtime: golang
+        group: integration-svc
+        collect_metrics: "true"
     spec:
       selector:
-        app: router-svc
+        svc: router-svc
       replicas: 1
       template:
         metadata:
           labels:
-            app: router-svc
+            svc: router-svc
+            group: integration-svc
+            collect_metrics: "true"
         spec:
           containers:
             - name: router-svc
@@ -54,23 +57,7 @@ items:
         - protocol: TCP
           port: 2112
           targetPort: 2112
-          name: metrics-router
+          name: metrics
       selector:
-        app: router-svc
+        svc: router-svc
       type: ClusterIP
-
-  - kind: ServiceMonitor
-    apiVersion: monitoring.coreos.com/v1
-    metadata:
-      labels:
-        k8s-app: router-svc
-      name: monitor-router-svc
-    spec:
-      endpoints:
-        - interval: 30s
-          path: "/metrics"
-          port: metrics-router
-          scheme: http
-      selector:
-        matchLabels:
-          app: router-svc

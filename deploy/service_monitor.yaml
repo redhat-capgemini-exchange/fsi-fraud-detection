@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: monitor-fsi-fraud-detection
+spec:
+  endpoints:
+    - interval: 20s
+      path: "/metrics"
+      port: metrics
+      scheme: http
+  selector:
+    matchLabels:
+      collect_metrics: "true"
