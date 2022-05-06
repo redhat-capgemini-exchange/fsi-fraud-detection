@@ -3,22 +3,18 @@ DEV_NAMESPACE = fsi-fraud-detection-dev
 BUILD_NAMESPACE = fsi-fraud-detection-xops
 
 .PHONY: prepare
-prepare: create_namespaces config_system deploy_kafka
+prepare: create_namespaces config_system config_kafka config_monitoring
 
 .PHONY: prepare_build
 prepare_build: apply_config apply_build prepare_notebooks
 
-.PHONY: prepare_notebooks
-prepare_notebooks:
-	oc apply -f notebooks/notebook_secrets.yaml -n ${PROD_NAMESPACE}
-	oc apply -f notebooks/build_simulator_notebook.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: create_namespaces
 create_namespaces:
 	oc new-project ${PROD_NAMESPACE}
 	oc new-project ${DEV_NAMESPACE}
 	oc new-project ${BUILD_NAMESPACE}
+	
 
 .PHONY: config_system
 config_system:
@@ -34,17 +30,19 @@ config_system:
     	--namespace=${BUILD_NAMESPACE}
 	oc apply -f deploy/pvc_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
 
-.PHONY: deploy_kafka
-deploy_kafka:
+
+.PHONY: config_kafka
+config_kafka:
 	oc apply -f deploy/kafka/kafka.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/kafka/kafka-topics.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/kafka/kafka-bridge.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/kafka/kafka-bridge-route.yaml -n ${PROD_NAMESPACE}
 
-.PHONY: deploy_monitoring
-deploy_monitoring:
-	oc apply -f deploy/monitoring/cluster-monitoring-config.yaml
-	oc apply -f deploy/monitoring/user-workload-monitoring-config.yaml
+.PHONY: config_monitoring
+config_monitoring:
+	oc apply -f deploy/monitoring/cluster_monitoring_config.yaml
+	oc apply -f deploy/monitoring/user_workload_monitoring-config.yaml
+
 
 .PHONY: apply_config
 apply_config:
@@ -62,15 +60,22 @@ apply_build:
 	oc apply -f builder/rules_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/fraud_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/archive_svc.yaml -n ${BUILD_NAMESPACE}
-	
+
+.PHONY: prepare_notebooks
+prepare_notebooks:
+	oc apply -f notebooks/notebook_secrets.yaml -n ${PROD_NAMESPACE}
+	oc apply -f notebooks/build_simulator_notebook.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
+
+
 .PHONY: apply_deploy
 apply_deploy:
-	oc apply -f deploy/archive_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/case_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/data_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/router_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/rules_app.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/fraud_app.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/archive_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/case_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/router_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: cleanup
 cleanup:
