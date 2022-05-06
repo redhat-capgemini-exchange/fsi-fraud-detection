@@ -77,6 +77,30 @@ apply_deploy:
 	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
 
+
+.PHONY: build_all
+build_all:
+	oc start-build golang-custom -n ${BUILD_NAMESPACE}
+	oc start-build data-svc -n ${BUILD_NAMESPACE}
+	oc start-build rules-app -n ${BUILD_NAMESPACE}
+	oc start-build fraud-app -n ${BUILD_NAMESPACE}
+
+.PHONY: rollout_all
+rollout_all: rollout_apps rollout_svc
+
+.PHONY: rollout_svc
+rollout_svc:
+	oc rollout latest dc/data-svc -n ${PROD_NAMESPACE}
+	oc rollout latest dc/router-svc -n ${PROD_NAMESPACE}
+	oc rollout latest dc/case-svc -n ${PROD_NAMESPACE}
+	oc rollout latest dc/archive-svc -n ${PROD_NAMESPACE}
+
+.PHONY: rollout_apps
+rollout_apps:
+	oc rollout latest dc/fraud-app -n ${PROD_NAMESPACE}
+	oc rollout latest dc/rules-app -n ${PROD_NAMESPACE}
+
+
 .PHONY: cleanup
 cleanup:
 	oc delete build --all -n ${BUILD_NAMESPACE}
