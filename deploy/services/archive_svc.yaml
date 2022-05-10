@@ -43,13 +43,13 @@ items:
                   value: "archive_svc"
 
                 - name: target_location
-                  value: "/opt/app-root/data"
+                  value: "/opt/app-root/src/data"
                 - name: target_prefix
                   value: audit
 
               volumeMounts:
                 - name: datalake-archive
-                  mountPath: "/opt/app-root/data"
+                  mountPath: "/opt/app-root/src/data"
 
   - kind: Service
     apiVersion: v1

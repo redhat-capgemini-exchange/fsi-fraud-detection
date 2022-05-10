@@ -1,6 +1,7 @@
 
 import datetime
 
+
 def is_weekend(tx_datetime):
 
     # Transform date into weekday (0 is Monday, 6 is Sunday)
@@ -89,3 +90,29 @@ def get_count_risk_rolling_window(terminal_transactions, delay_period=7, windows
     terminal_transactions.fillna(0, inplace=True)
 
     return terminal_transactions
+
+
+def process_transactions(tx_df):
+    # Add two features to the transactions:
+    # The first one will characterize whether a transaction occurs during a weekday or during the weekend.
+    # The second will characterize whether a transaction occurs during the day or the night.
+    tx_df['TX_DURING_WEEKEND'] = tx_df.TX_DATETIME.apply(is_weekend)
+    tx_df['TX_DURING_NIGHT'] = tx_df.TX_DATETIME.apply(is_night)
+
+    # Customer ID transformations
+    # We will take inspiration from the RFM (Recency, Frequency, Monetary value)
+    # framework proposed in {cite}VANVLASSELAER201538, and compute two of these features over three time windows.
+
+    tx_df = tx_df.groupby('CUSTOMER_ID').apply(
+        lambda x: get_customer_spending_behaviour_features(x, windows_size_in_days=[1, 7, 30]))
+    tx_df = tx_df.sort_values('TX_DATETIME').reset_index(drop=True)
+
+    # Terminal ID transformations
+    # The main goal will be to extract a risk score, that assesses the exposure of a given terminal ID to fraudulent transactions.
+    # The risk score will be defined as the average number of fraudulent transactions that occurred on a terminal ID over a time window.
+
+    tx_df = tx_df.groupby('TERMINAL_ID').apply(lambda x: get_count_risk_rolling_window(
+        x, delay_period=7, windows_size_in_days=[1, 7, 30], feature="TERMINAL_ID"))
+    tx_df = tx_df.sort_values('TX_DATETIME').reset_index(drop=True)
+
+    return tx_df

@@ -69,7 +69,6 @@ apply_build:
 prepare_notebooks:
 	oc apply -f notebooks/notebook_secrets.yaml -n ${PROD_NAMESPACE}
 	oc apply -f notebooks/build_simulator_notebook.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
 
 
 .PHONY: apply_deploy
@@ -80,6 +79,7 @@ apply_deploy:
 	oc apply -f deploy/services/router_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
+	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
 
 
 .PHONY: build_all
