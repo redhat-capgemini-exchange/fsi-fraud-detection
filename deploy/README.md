@@ -10,9 +10,9 @@ a manual process. The following infrastructure is used:
 ### Preparation
 
 * create an OpenShift cluster
-* create a project on GCP
+* create a project on GCP (optional)
 
-#### Google Cloud Platform
+#### Google Cloud Platform (optional)
 
 * create a project: `fsi-fraud-dection`
 * create two buckets in Cloud Storage: `fsi-fraud-detection-training` and `fsi-fraud-detection-archive`
@@ -34,36 +34,20 @@ Just install the Operators using the defaults and `latest`.
  
 ### Setup
 
-Create the default projects:
+Step 1: Create the default projects and basic infrastructure:
 
 ```shell
-oc new-project fsi-fraud-detection
-oc new-project fsi-fraud-detection-xops
+make prepare
 ```
 
-Allow images from namespace `fsi-fraud-detection-xops` to be pulled into `fsi-fraud-detection`:
+* In project `fsi-fraud-detection`, wait until the Kafka resources (Broker, Zookeeper, Bridge) are ready.
+* In project `fsi-fraud-detection-xops`, verify that the `golang` and `Jupyter` s2i images are created.
+
+Step 2: Create all services and apps
 
 ```shell
-oc policy add-role-to-user \
-    system:image-puller system:serviceaccount:fsi-fraud-detection:default \
-    --namespace=fsi-fraud-detection-xops
+make prepare_build
 ```
 
-#### Preparation
-
-```shell
-oc apply -f deploy/limit-ranges.yaml -n fsi-fraud-detection
-```
-
-#### Kafka
-
-```shell
-oc apply -f deploy/kafka.yaml -n fsi-fraud-detection
-
-# ... wait until Kafka is ready ...
-
-oc apply -f deploy/kafka-topics.yaml -n fsi-fraud-detection
-oc apply -f deploy/kafka-bridge.yaml -n fsi-fraud-detection
-oc apply -f deploy/kafka-bridge-route.yaml -n fsi-fraud-detection
-```
+* In project `fsi-fraud-detection-xops`, wait until all builds are completed.
 

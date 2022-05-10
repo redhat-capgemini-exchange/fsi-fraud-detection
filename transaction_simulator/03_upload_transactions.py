@@ -8,7 +8,7 @@ import argparse
 import requests
 import datetime
 
-from simulator.shared import read_from_files
+from simulator.shared import read_from_pkl
 
 KAFKA_HEADERS = {'content-type': 'application/vnd.kafka.json.v2+json'}
 
@@ -17,7 +17,7 @@ def upload_transactions(args):
     KAFKA_ENDPOINT = f"{args.bridge}/topics/{args.topic}"
 
     # read the raw transaction data
-    transactions_df = read_from_files(args.dir, args.start, args.end)
+    transactions_df = read_from_pkl(args.dir, args.start, args.end)
 
     # remove the TX_FRAUD,TX_FRAUD_SCENARIO columns in order to simulate a 'new' transaction
     transactions_df = transactions_df.drop(['TX_FRAUD', 'TX_FRAUD_SCENARIO'], axis=1)

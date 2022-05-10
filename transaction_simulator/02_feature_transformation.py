@@ -3,7 +3,7 @@
 import os
 import datetime
 
-from simulator.shared import read_from_files
+from simulator.shared import read_from_pkl
 from simulator.transformer import *
 
 START_DATE = "2020-04-01"
@@ -13,7 +13,7 @@ DIR_INPUT = "./data/simulated/pkl/"
 DIR_OUTPUT = "./data/training/"
 
 # read the raw transaction data
-transactions_df = read_from_files(DIR_INPUT, START_DATE, END_DATE)
+transactions_df = read_from_pkl(DIR_INPUT, START_DATE, END_DATE)
 
 # Add two features to the transactions:
 # The first one will characterize whether a transaction occurs during a weekday or during the weekend.

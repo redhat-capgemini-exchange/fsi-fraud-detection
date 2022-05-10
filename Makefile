@@ -3,7 +3,7 @@ DEV_NAMESPACE = fsi-fraud-detection-dev
 BUILD_NAMESPACE = fsi-fraud-detection-xops
 
 .PHONY: prepare
-prepare: create_namespaces config_system config_kafka config_monitoring
+prepare: create_namespaces config_system config_kafka config_monitoring prepare_images
 
 .PHONY: prepare_build
 prepare_build: apply_config apply_build prepare_notebooks
@@ -41,7 +41,7 @@ config_kafka:
 .PHONY: config_monitoring
 config_monitoring:
 	oc apply -f deploy/monitoring/cluster_monitoring_config.yaml
-	oc apply -f deploy/monitoring/user_workload_monitoring-config.yaml
+	oc apply -f deploy/monitoring/user_workload_monitoring_config.yaml
 
 
 .PHONY: apply_config
@@ -50,10 +50,14 @@ apply_config:
 	oc apply -f deploy/config_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
 	oc apply -f secrets/build_secrets.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f secrets/deploy_secrets.yaml -n ${PROD_NAMESPACE}
-	
+
+.PHONY: prepare_images
+prepare_images:
+	oc apply -f builder/image_golang.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/image_notebook.yaml -n ${BUILD_NAMESPACE}
+
 .PHONY: apply_build
 apply_build:
-	oc apply -f builder/golang_custom.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/data_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/case_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/router_svc.yaml -n ${BUILD_NAMESPACE}
