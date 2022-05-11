@@ -38,7 +38,7 @@ func main() {
 	groupID := env.GetString("group_id", "fsi-fraud-detection")
 
 	sourceTopic := env.GetString("source_topic", "tx-archive")
-	archiveLocation := env.GetString("target_location", "/opt/app-root/data")
+	archiveLocation := env.GetString("target_location", "/opt/app-root/src/data")
 	archiveLocationPrefix := env.GetString("target_prefix", "audit")
 
 	// prometheus setup
@@ -82,7 +82,7 @@ func main() {
 	out, location := newFile(archiveLocation, archiveLocationPrefix)
 	writer := csv.NewWriter(out)
 	writer.Write(internal.ArchiveHeader)
-	batchSize := 1000
+	batchSize := 2000
 	num := 0
 
 	fmt.Printf(" --> archiving to %s\n", location)

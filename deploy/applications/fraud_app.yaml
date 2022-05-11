@@ -17,11 +17,25 @@ items:
             app: fraud-app
             group: backend-apps
         spec:
+          volumes:
+            - name: datalake-archive
+              persistentVolumeClaim:
+                claimName: datalake
           containers:
             - name: fraud-app
               image: >-
                 image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/fraud-app:latest
-              #env:
+              env:
+                - name: model_location
+                  value: "./data/model/model_latest.pkl"
+                - name: tx_fraud_threshold
+                  value: "0.8"
+                - name: tx_fraud_scenario
+                  value: "2"
+                
+              volumeMounts:
+                - name: datalake-archive
+                  mountPath: "/opt/app-root/src/data"
 
               #resources:
               #  limits:

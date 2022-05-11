@@ -1,10 +1,42 @@
+import os
+import pandas as pd
+import cloudpickle as cp
+
+
+input_features = ['TX_AMOUNT', 'TX_DURING_WEEKEND', 'TX_DURING_NIGHT', 'CUSTOMER_ID_NB_TX_1DAY_WINDOW',
+                  'CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW', 'CUSTOMER_ID_NB_TX_7DAY_WINDOW',
+                  'CUSTOMER_ID_AVG_AMOUNT_7DAY_WINDOW', 'CUSTOMER_ID_NB_TX_30DAY_WINDOW',
+                  'CUSTOMER_ID_AVG_AMOUNT_30DAY_WINDOW', 'TERMINAL_ID_NB_TX_1DAY_WINDOW',
+                  'TERMINAL_ID_RISK_1DAY_WINDOW', 'TERMINAL_ID_NB_TX_7DAY_WINDOW',
+                  'TERMINAL_ID_RISK_7DAY_WINDOW', 'TERMINAL_ID_NB_TX_30DAY_WINDOW',
+                  'TERMINAL_ID_RISK_30DAY_WINDOW']
+
+# load the latest model
+model_location = os.getenv('model_location', './data/model/model_latest.pkl')
+TX_FRAUD_THRESHOLD = float(os.getenv('tx_fraud_threshold','0.8'))
+TX_FRAUD_SCENARIO = int(os.getenv('tx_fraud_scenario','2'))
+
+
+print(f" --> loading model '{model_location}'")
+model = cp.load(open(model_location, 'rb'))
 
 def predict(args_dict):
-    fraud = 0
     scenario = -1
+    fraud = 0
 
+    # calculate the fraud probability
+    df = pd.DataFrame(args_dict, index=[0])[input_features]
+    prob = model.predict_proba(df)
+    
+    # build the result set
+    p = prob[:, 1][0]
+    if p >= TX_FRAUD_THRESHOLD:
+        fraud = 1
+        scenario = TX_FRAUD_SCENARIO
+    
     return {
         'TRANSACTION_ID': args_dict.get('TRANSACTION_ID'),
-        'TX_FRAUD': fraud,
+        'TX_FRAUD_PREDICTION': fraud,
+        'TX_FRAUD_PROBABILITY': p,
         'TX_FRAUD_SCENARIO': scenario
     }

@@ -11,7 +11,6 @@ import time
 
 import random
 
-DIR_OUTPUT = "./simulated-data-raw/"
 START_DATE = "2020-04-01"
 END_DATE = "2020-05-30"
 

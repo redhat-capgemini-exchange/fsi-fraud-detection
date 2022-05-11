@@ -4,8 +4,8 @@ import os
 import datetime
 import pandas as pd
 
-from simulator.shared import read_from_pkl
-from simulator.transformer import *
+from shared import read_from_pkl
+from simulator.transformer import feature_transformation
 
 START_DATE = "2020-04-01"
 END_DATE = "2020-04-30"
@@ -19,7 +19,7 @@ transactions_df = read_from_pkl(DIR_INPUT, START_DATE, END_DATE)
 
 # transform transactions
 print("Calculating customer and terminal stats ...")
-transactions_df = process_transactions(transactions_df)
+transactions_df = feature_transformation(transactions_df)
 
 print("Saving transformed transactions ...")
 

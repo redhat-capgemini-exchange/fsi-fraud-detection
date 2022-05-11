@@ -92,7 +92,7 @@ def get_count_risk_rolling_window(terminal_transactions, delay_period=7, windows
     return terminal_transactions
 
 
-def process_transactions(tx_df):
+def feature_transformation(tx_df):
     # Add two features to the transactions:
     # The first one will characterize whether a transaction occurs during a weekday or during the weekend.
     # The second will characterize whether a transaction occurs during the day or the night.

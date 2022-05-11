@@ -2,18 +2,12 @@
 # coding: utf-8
 import argparse
 
-from shared import upload_transactions
+from shared import post_transactions
 
 
 def setup():
 
     parser = argparse.ArgumentParser()
-
-    # kafka bridge endpoint
-    parser.add_argument(
-        '--bridge',
-        required=True
-    )
 
     # start and end date
     parser.add_argument(
@@ -22,22 +16,22 @@ def setup():
     )
     parser.add_argument(
         '--end',
-        default='2020-04-02'
+        default='2020-04-01'
     )
 
     # environment
     parser.add_argument(
-        '--topic',
-        default='tx-inbox'
+        '--endpoint',
+        default='http://127.0.0.1:5000/predict'
     )
     parser.add_argument(
         '--dir',
-        default='./data/simulated/pkl/'
+        default='./data/audit/'
     )
     parser.add_argument(
         '--batch-size',
         type=int,
-        default=100
+        default=1
     )
 
     return parser.parse_args()
@@ -48,9 +42,8 @@ if __name__ == '__main__':
     args = setup()
 
     print('')
-    print(f" --> Replaying transactions from {args.start} to {args.end}")
+    print(f" --> Posting transactions from {args.start} to {args.end}")
 
-    upload_transactions(args.bridge, args.topic, args.start,
-                        args.end, args.dir, args.batch_size)
+    post_transactions(args.endpoint, args.start, args.end, args.dir, args.batch_size)
 
     print(" --> DONE.")

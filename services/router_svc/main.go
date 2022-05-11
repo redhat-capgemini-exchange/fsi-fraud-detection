@@ -111,7 +111,7 @@ func main() {
 			}
 
 			// check 2: ML model in case the rules engine passed the TX
-			if resp.TX_FRAUD == 0 {
+			if resp.TX_FRAUD_PREDICTION == 0 {
 				if err := internal.PostJSON(fraudAppEndpoint, &tx, &resp); err != nil {
 					fmt.Printf(" --> ML error: %v\n", err)
 					continue // FIXME skipping this transaction, what else?
@@ -119,15 +119,18 @@ func main() {
 			}
 
 			// decide on the target topic based on TX_FRAUD
-			if resp.TX_FRAUD > 0 {
+			if resp.TX_FRAUD_PREDICTION > 0 {
 				nextTopic = fraudTopic
-				tx.TX_FRAUD = resp.TX_FRAUD
+				tx.TX_FRAUD = resp.TX_FRAUD_PREDICTION
+				tx.TX_FRAUD_PREDICTION = resp.TX_FRAUD_PREDICTION
 				tx.TX_FRAUD_SCENARIO = resp.TX_FRAUD_SCENARIO
 			} else {
 				// TX seems to be OK, clear the fraud flags
 				tx.TX_FRAUD = 0
 				tx.TX_FRAUD_SCENARIO = 0
 			}
+			tx.TX_FRAUD_PREDICTION = resp.TX_FRAUD_PREDICTION
+			tx.TX_FRAUD_PROBABILITY = resp.TX_FRAUD_PROBABILITY
 
 			if tx.TX_FRAUD > 0 {
 				fmt.Printf(" ---> fraudulent TX %d: %v\n", tx.TRANSACTION_ID, tx)

@@ -40,7 +40,7 @@ for day in range(transactions_df.TX_TIME_DAYS.max()+1):
     filename_output = date.strftime("%Y-%m-%d")
     
     transactions_day.to_pickle(DIR_OUTPUT+ "pkl/" + filename_output +'.pkl', protocol=4)
-    transactions_day.to_csv(DIR_OUTPUT+ "csv/" + filename_output +'.csv')
+    transactions_day.to_csv(DIR_OUTPUT+ "csv/" + filename_output +'.csv', index=False)
 
 # also save the customer and terminal data
 terminal_profiles_table.to_pickle(
