@@ -53,7 +53,7 @@ make prepare_build
 
 ## Deploy services
 
-Deploy the services, apps and notenbooks:
+Deploy all services, apps and notebooks:
 
 ```shell
 make apply_deploy
