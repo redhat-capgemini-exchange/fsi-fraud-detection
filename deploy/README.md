@@ -58,3 +58,9 @@ Deploy all services, apps and notebooks:
 ```shell
 make apply_deploy
 ```
+
+To cleanup all completed build and deployment pods, run:
+
+```shell
+make cleanup
+```
