@@ -15,7 +15,7 @@ items:
         git:
           ref: develop
           uri: "https://github.com/redhat-capgemini-exchange/fsi-fraud-detection"
-        contextDir: "notebooks/simulator"
+        contextDir: "notebooks/tx_simulator"
         type: Git
       strategy:
         type: Source
