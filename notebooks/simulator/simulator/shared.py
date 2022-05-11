@@ -1,4 +1,5 @@
 import os
+import datetime
 import pandas as pd
 
 
@@ -60,3 +61,26 @@ def merge_csv_files(file_collection):
     df_final.reset_index(drop=True, inplace=True)
 
     return df_final
+
+
+def load_transactions(file_collection, cutoff_date=None, time_window=-1):
+    tx_df = merge_csv_files(file_collection)
+
+    # TX_DATETIME is in UNIX time in the files. This needs conversion for more advanced calculations, e.g. rolling time-windows
+    tx_df['TX_DATETIME'] = pd.to_datetime(tx_df['TX_DATETIME'] * 1000000000)
+
+    if cutoff_date == None and time_window == -1:
+        return td_df # return all transactions
+
+    if cutoff_date != None and time_window == -1:
+        return transactions_df.loc[transactions_df['TX_DATETIME'] > cutoff_date.strftime("%Y-%m-%d")]
+
+    if cutoff_date == None and time_window > -1:
+        # return the n last days
+        d = tx_df['TX_DATETIME'].max() - datetime.timedelta(days=time_window + 1)
+        return tx_df.loc[tx_df['TX_DATETIME'] > d.strftime("%Y-%m-%d")]
+
+    # if cutoff_date != None and time_window > -1:
+    # this is not supported yet!
+
+    return td_df
