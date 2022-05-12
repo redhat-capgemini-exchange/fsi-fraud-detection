@@ -45,7 +45,7 @@ items:
                   value: "archive_svc"
 
                 - name: target_location
-                  value: "/opt/app-root/src/data"
+                  value: "/opt/app-root/data"
                 - name: target_prefix
                   value: audit
 
