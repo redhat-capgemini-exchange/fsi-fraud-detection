@@ -11,11 +11,13 @@ ls -la
 echo "ls /opt/app-root"
 ls -la /opt/app-root
 
-echo "ls SCRIPTPATH"
-ls -la $STI_SCRIPTS_PATH
+exec $STI_SCRIPTS_PATH/assemble
 
-echo "cat ASSEMBLE"
-cat $STI_SCRIPTS_PATH/assemble
+#echo "ls SCRIPTPATH"
+#ls -la $STI_SCRIPTS_PATH
 
-echo "cat OTHER ASSEMBLE"
-cat /usr/libexec/s2i/assemble
+#echo "cat ASSEMBLE"
+#cat $STI_SCRIPTS_PATH/assemble
+
+#echo "cat OTHER ASSEMBLE"
+#cat /usr/libexec/s2i/assemble

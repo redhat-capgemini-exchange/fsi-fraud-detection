@@ -10,6 +10,10 @@ items:
         app.openshift.io/runtime: python
     spec:
       runPolicy: Serial
+      volumes:
+        - name: fraud-model
+          persistentVolumeClaim:
+            claimName: models
       source:
         git:
           ref: develop
@@ -24,6 +28,10 @@ items:
             name: "python:3.9-ubi8"
             namespace: openshift
           env: []
+          volumeMounts:
+            - name: fraud-model
+              readOnly: true
+              mountPath: '/opt/app-root/data/models'
       output:
         to:
           kind: ImageStreamTag
