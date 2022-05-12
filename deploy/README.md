@@ -64,7 +64,7 @@ make prepare_build
 __Step 4:__ Deploy all services, apps and notebooks:
 
 ```shell
-make apply_deploy
+make deploy_services
 ```
 
 ## Cleanup

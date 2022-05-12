@@ -13,27 +13,41 @@ input_features = ['TX_AMOUNT', 'TX_DURING_WEEKEND', 'TX_DURING_NIGHT', 'CUSTOMER
 
 # load the latest model
 model_location = os.getenv('model_location', './data/model/model_latest.pkl')
-TX_FRAUD_THRESHOLD = float(os.getenv('tx_fraud_threshold','0.8'))
-TX_FRAUD_SCENARIO = int(os.getenv('tx_fraud_scenario','2'))
+TX_FRAUD_THRESHOLD = float(os.getenv('tx_fraud_threshold', '0.8'))
+TX_FRAUD_SCENARIO = int(os.getenv('tx_fraud_scenario', '2'))
 
-
+# load the model if possible
 print(f" --> loading model '{model_location}'")
-model = cp.load(open(model_location, 'rb'))
+
+model = None
+try:
+    model = cp.load(open(model_location, 'rb'))
+except:
+    print(f" --> failed to load model '{model_location}'")
+
 
 def predict(args_dict):
     scenario = -1
     fraud = 0
 
+    if model == None:
+        return {
+            'TRANSACTION_ID': args_dict.get('TRANSACTION_ID'),
+            'TX_FRAUD_PREDICTION': fraud,
+            'TX_FRAUD_PROBABILITY': 0.0,
+            'TX_FRAUD_SCENARIO': scenario
+        }
+
     # calculate the fraud probability
     df = pd.DataFrame(args_dict, index=[0])[input_features]
     prob = model.predict_proba(df)
-    
+
     # build the result set
     p = prob[:, 1][0]
     if p >= TX_FRAUD_THRESHOLD:
         fraud = 1
         scenario = TX_FRAUD_SCENARIO
-    
+
     return {
         'TRANSACTION_ID': args_dict.get('TRANSACTION_ID'),
         'TX_FRAUD_PREDICTION': fraud,

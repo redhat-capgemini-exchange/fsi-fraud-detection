@@ -2,18 +2,35 @@ PROD_NAMESPACE = fsi-fraud-detection
 DEV_NAMESPACE = fsi-fraud-detection-dev
 BUILD_NAMESPACE = fsi-fraud-detection-xops
 
-.PHONY: prepare_infra
-prepare_infra: config_system apply_config config_kafka config_monitoring prepare_images
-
-.PHONY: prepare_build
-prepare_build: apply_build prepare_notebooks
-
-
+# step1
 .PHONY: create_namespaces
 create_namespaces:
 	oc new-project ${PROD_NAMESPACE}
 	oc new-project ${DEV_NAMESPACE}
 	oc new-project ${BUILD_NAMESPACE}
+
+
+# step2
+.PHONY: prepare_infra
+prepare_infra: config_system apply_config config_kafka config_monitoring prepare_images
+
+# step3
+.PHONY: prepare_build
+prepare_build: apply_build prepare_notebooks
+
+# step4
+.PHONY: deploy_services
+deploy_services:
+	oc apply -f deploy/services/archive_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/case_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/router_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
+
+.PHONY: deploy_notebooks
+deploy_notebooks:
+	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
 	
 
 .PHONY: config_system
@@ -72,23 +89,13 @@ prepare_notebooks:
 	oc apply -f notebooks/build_simulator_notebook.yaml -n ${BUILD_NAMESPACE}
 
 
-.PHONY: apply_deploy
-apply_deploy:
-	oc apply -f deploy/services/archive_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/case_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/router_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
-
-
 .PHONY: build_all
 build_all:
 	oc start-build golang-custom -n ${BUILD_NAMESPACE}
 	oc start-build data-svc -n ${BUILD_NAMESPACE}
 	oc start-build rules-app -n ${BUILD_NAMESPACE}
 	oc start-build fraud-app -n ${BUILD_NAMESPACE}
+
 
 .PHONY: rollout_all
 rollout_all: rollout_apps rollout_svc
@@ -113,6 +120,6 @@ cleanup:
 	oc delete pod --field-selector=status.phase==Succeeded -n ${PROD_NAMESPACE}
 
 .PHONY: undeploy_all
-undeploy_all:
+undeploy_all: cleanup
 	oc delete routes,dc,pvc,services,configmaps,secrets -l app-owner=fsi-fraud-detection -n ${PROD_NAMESPACE}
 	oc delete bc,is,configmaps,secrets -l app-owner=fsi-fraud-detection -n ${BUILD_NAMESPACE}
