@@ -19,6 +19,9 @@ items:
             - name: datalake-archive
               persistentVolumeClaim:
                 claimName: datalake
+            - name: ml-models
+              persistentVolumeClaim:
+                claimName: models
           containers:
             - name: simulator-notebook
               image: >-
@@ -35,6 +38,8 @@ items:
               volumeMounts:
                 - name: datalake-archive
                   mountPath: '/opt/app-root/src/data'
+                - name: ml-models
+                  mountPath: '/opt/app-root/src/models'
 
               env:
                 - name: JUPYTER_PORT

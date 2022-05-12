@@ -5,7 +5,7 @@ import datetime
 import pandas as pd
 
 from shared import read_from_pkl
-from simulator.transformer import feature_transformation
+from transformer import feature_transformation
 
 START_DATE = "2020-04-01"
 END_DATE = "2020-04-30"

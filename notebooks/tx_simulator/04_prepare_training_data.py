@@ -5,7 +5,7 @@ import datetime
 import pandas as pd
 
 from shared import load_transactions
-from simulator.transformer import feature_transformation
+from transformer import feature_transformation
 
 DIR_INPUT = os.getenv('source_location', './data/audit/')
 DIR_OUTPUT = os.getenv('target_location', './data/training/')

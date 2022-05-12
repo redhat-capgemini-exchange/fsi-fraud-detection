@@ -3,7 +3,7 @@
 import os
 import datetime
 
-from simulator.generate import generate_dataset, add_frauds
+from generator import generate_dataset, add_frauds
 
 N_CUSTOMERS = 5000
 N_TERMINALS = 10000

@@ -37,7 +37,7 @@ Just install the Operators using the `defaults` and `latest`.
 Create the default projects and basic infrastructure:
 
 ```shell
-make prepare
+make prepare_infra
 ```
 
 * In project `fsi-fraud-detection`, wait until the Kafka resources (Broker, Zookeeper, Bridge) are ready.

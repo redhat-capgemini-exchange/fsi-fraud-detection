@@ -2,8 +2,8 @@ PROD_NAMESPACE = fsi-fraud-detection
 DEV_NAMESPACE = fsi-fraud-detection-dev
 BUILD_NAMESPACE = fsi-fraud-detection-xops
 
-.PHONY: prepare
-prepare: create_namespaces config_system config_kafka config_monitoring prepare_images
+.PHONY: prepare_infra
+prepare_infra: create_namespaces config_system config_kafka config_monitoring prepare_images
 
 .PHONY: prepare_build
 prepare_build: apply_config apply_build prepare_notebooks
@@ -28,7 +28,8 @@ config_system:
 	oc policy add-role-to-user \
 		system:image-puller system:serviceaccount:${DEV_NAMESPACE}:default \
     	--namespace=${BUILD_NAMESPACE}
-	oc apply -f deploy/pvc_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/pvc_data.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/pvc_models.yaml -n ${PROD_NAMESPACE}
 
 
 .PHONY: config_kafka
@@ -75,10 +76,10 @@ prepare_notebooks:
 apply_deploy:
 	oc apply -f deploy/services/archive_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/case_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/router_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
 
 
