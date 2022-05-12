@@ -2,6 +2,31 @@
 
 Setup of a basic MLOps demonstrator inspired by the "[Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook](https://fraud-detection-handbook.github.io/fraud-detection-handbook/Foreword.html)" repository on GitHub.
 
+## Deployment
+
+See deploy/README.md
+
+## Run the demo
+
+### Deploy the notebooks
+
+```shell
+make deploy_notebooks
+```
+
+### Run the notebooks
+
+To create synthetic data:
+
+* 01_create_transactions.ipynb
+* 02_feature_transformation.ipynb
+
+To create a first ML model:
+
+* 03_train_model.ipynb
+
+Note: Stop the notebook server after creating the data !
+
 ### References
 
 * [Fraud detection with machine learning](https://www.researchgate.net/project/Fraud-detection-with-machine-learning)

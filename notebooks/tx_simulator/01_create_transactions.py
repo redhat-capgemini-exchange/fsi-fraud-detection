@@ -10,8 +10,6 @@ N_TERMINALS = 10000
 N_DAYS = 183
 
 START_DATE = "2020-04-01"
-END_DATE = "2020-05-30"
-
 DIR_OUTPUT = "./data/simulated/"
 
 
