@@ -1,0 +1,17 @@
+
+echo "MY ASSEMBLE"
+
+echo "pwd"
+pwd
+
+echo "ls"
+ls -la 
+
+echo "ls /opt/app-root"
+ls -la /opt/app-root
+
+echo "ls SCRIPTPATH"
+ls -la $STI_SCRIPTS_PATH
+
+echo "cat ASSEMBLE"
+cat $STI_SCRIPTS_PATH/assemble

@@ -18,7 +18,7 @@ items:
             group: backend-apps
         spec:
           volumes:
-            - name: ml-models
+            - name: fraud-model
               persistentVolumeClaim:
                 claimName: models
           containers:
@@ -27,15 +27,16 @@ items:
                 image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/fraud-app:latest
               env:
                 - name: model_location
-                  value: "./models/model_latest.pkl"
+                  value: "/opt/app-root/data/models/model_latest.pkl"
                 - name: tx_fraud_threshold
                   value: "0.8"
                 - name: tx_fraud_scenario
                   value: "2"
                 
               volumeMounts:
-                - name: ml-models
-                  mountPath: '/opt/app-root/src/models'
+                - name: fraud-model
+                  readOnly: true
+                  mountPath: '/opt/app-root/data/models'
 
               #resources:
               #  limits:
