@@ -16,3 +16,6 @@ ls -la $STI_SCRIPTS_PATH
 
 echo "cat ASSEMBLE"
 cat $STI_SCRIPTS_PATH/assemble
+
+echo "cat OTHER ASSEMBLE"
+cat /usr/libexec/s2i/assemble
