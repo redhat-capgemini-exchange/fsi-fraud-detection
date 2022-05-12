@@ -6,9 +6,9 @@ items:
     metadata:
       name: simulator-notebook
       labels:
-        app.openshift.io/runtime: python
-        svc: simulator-notebook
         app: jupyterhub
+        app-owner: fsi-fraud-detection
+        app.openshift.io/runtime: python
     spec:
       runPolicy: Serial
       source:
@@ -41,8 +41,8 @@ items:
     metadata:
       name: simulator-notebook
       labels:
-        app.openshift.io/runtime: python
-        svc: simulator-notebook
         app: jupyterhub
+        app-owner: fsi-fraud-detection
+        app.openshift.io/runtime: python
       annotations:
         description: simulator-notebook image

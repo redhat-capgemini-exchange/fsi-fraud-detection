@@ -3,10 +3,10 @@ DEV_NAMESPACE = fsi-fraud-detection-dev
 BUILD_NAMESPACE = fsi-fraud-detection-xops
 
 .PHONY: prepare_infra
-prepare_infra: create_namespaces config_system config_kafka config_monitoring prepare_images
+prepare_infra: config_system apply_config config_kafka config_monitoring prepare_images
 
 .PHONY: prepare_build
-prepare_build: apply_config apply_build prepare_notebooks
+prepare_build: apply_build prepare_notebooks
 
 
 .PHONY: create_namespaces
@@ -111,3 +111,8 @@ cleanup:
 	oc delete build --all -n ${BUILD_NAMESPACE}
 	oc delete pod --field-selector=status.phase==Succeeded -n ${BUILD_NAMESPACE}
 	oc delete pod --field-selector=status.phase==Succeeded -n ${PROD_NAMESPACE}
+
+.PHONY: undeploy_all
+undeploy_all:
+	oc delete routes,dc,pvc,services,configmaps,secrets -l app-owner=fsi-fraud-detection -n ${PROD_NAMESPACE}
+	oc delete bc,is,configmaps,secrets -l app-owner=fsi-fraud-detection -n ${BUILD_NAMESPACE}

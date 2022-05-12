@@ -2,6 +2,8 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaBridge
 metadata:
   name: transaction-bridge
+  labels:
+    app-owner: fsi-fraud-detection-kafka
   #namespace: fsi-fraud-detection
 spec:
   http:

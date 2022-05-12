@@ -6,7 +6,8 @@ items:
     metadata:
       name: simulator-notebook
       labels:
-        svc: simulator-notebook
+        app: simulator-notebook
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
     spec:
       replicas: 1
@@ -14,6 +15,8 @@ items:
         metadata:
           labels:
             app: simulator-notebook
+            app-owner: fsi-fraud-detection
+            app.openshift.io/runtime: python
         spec:
           volumes:
             - name: datalake-archive
@@ -57,6 +60,8 @@ items:
     apiVersion: v1
     metadata:
       name: simulator-notebook-svc
+      labels:
+        app-owner: fsi-fraud-detection
     spec:
       ports:
         - protocol: TCP
@@ -68,7 +73,9 @@ items:
   - kind: Route
     apiVersion: route.openshift.io/v1
     metadata:
-      name: sim
+      name: notebooks
+      labels:
+        app-owner: fsi-fraud-detection
     spec:
       to:
         kind: Service

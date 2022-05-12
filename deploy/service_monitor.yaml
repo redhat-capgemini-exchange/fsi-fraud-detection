@@ -2,6 +2,8 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: monitor-fsi-fraud-detection
+  labels:
+    app-owner: fsi-fraud-detection
 spec:
   endpoints:
     - interval: 20s

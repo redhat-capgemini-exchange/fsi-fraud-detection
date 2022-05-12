@@ -31,10 +31,18 @@ Install the following Operators:
 * Red Hat Integration - AMQ Streams
 
 Just install the Operators using the `defaults` and `latest`.
- 
-## Build containers
 
-Create the default projects and basic infrastructure:
+#### Create the Namespace
+
+__Step 1:__ Create the default projects:
+
+```shell
+make create_namespaces
+```
+
+## Build
+
+__Step 2:__ Create the basic infrastructure:
 
 ```shell
 make prepare_infra
@@ -43,7 +51,7 @@ make prepare_infra
 * In project `fsi-fraud-detection`, wait until the Kafka resources (Broker, Zookeeper, Bridge) are ready.
 * In project `fsi-fraud-detection-xops`, verify that the `golang` and `Jupyter` s2i images are created.
 
-Create all services and apps:
+__Step 3:__ Build all services and apps:
 
 ```shell
 make prepare_build
@@ -51,16 +59,24 @@ make prepare_build
 
 * In project `fsi-fraud-detection-xops`, wait until all builds are completed.
 
-## Deploy services
+## Deploy Services
 
-Deploy all services, apps and notebooks:
+__Step 4:__ Deploy all services, apps and notebooks:
 
 ```shell
 make apply_deploy
 ```
 
+## Cleanup
+
 To cleanup all completed build and deployment pods, run:
 
 ```shell
 make cleanup
+```
+
+## Undeploy
+
+```shell
+make undeploy_all
 ```

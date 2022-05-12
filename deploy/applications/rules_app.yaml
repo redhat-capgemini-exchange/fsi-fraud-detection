@@ -6,7 +6,8 @@ items:
     metadata:
       name: rules-app
       labels:
-        svc: rules-app
+        app: rules-app
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
         group: backend-apps
     spec:
@@ -15,6 +16,7 @@ items:
         metadata:
           labels:
             app: rules-app
+            app-owner: fsi-fraud-detection
             group: backend-apps
         spec:
           containers:
@@ -42,6 +44,8 @@ items:
     apiVersion: v1
     metadata:
       name: rules-app-svc
+      labels:
+        app-owner: fsi-fraud-detection
     spec:
       ports:
         - protocol: TCP
@@ -55,6 +59,8 @@ items:
     apiVersion: route.openshift.io/v1
     metadata:
       name: validate
+      labels:
+        app-owner: fsi-fraud-detection
     spec:
       to:
         kind: Service

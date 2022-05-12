@@ -2,6 +2,8 @@ kind: LimitRange
 apiVersion: v1
 metadata:
   name: fsi-fraud-detection-core-resource-limits
+  labels:
+    app-owner: fsi-fraud-detection
 spec:
   limits:
     - type: Container

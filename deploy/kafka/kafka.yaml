@@ -2,6 +2,8 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: transactions
+  labels:
+    app-owner: fsi-fraud-detection-kafka
   #namespace: fsi-fraud-detection
 spec:
   kafka:

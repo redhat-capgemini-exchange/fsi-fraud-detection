@@ -6,6 +6,7 @@ items:
     metadata:
       name: base-notebook
       labels:
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
     spec:
       source:
@@ -32,6 +33,7 @@ items:
     metadata:
       name: base-notebook
       labels:
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
       annotations:
         description: base-notebook builder image

@@ -7,6 +7,7 @@ items:
       name: fraud-app
       labels:
         app: fsi-fraud-detection
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
     spec:
       runPolicy: Serial
@@ -51,6 +52,7 @@ items:
       name: fraud-app
       labels:
         app: fsi-fraud-detection
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
       annotations:
         description: fraud-app services image

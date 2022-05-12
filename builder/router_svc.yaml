@@ -7,6 +7,7 @@ items:
       name: router-svc
       labels:
         app: fsi-fraud-detection
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
     spec:
       runPolicy: Serial
@@ -45,6 +46,7 @@ items:
       labels:
         svc: router-svc
         app: fsi-fraud-detection
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
       annotations:
         description: router-svc services image

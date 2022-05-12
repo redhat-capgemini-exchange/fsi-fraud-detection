@@ -7,6 +7,7 @@ items:
       name: router-svc
       labels:
         svc: router-svc
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
         group: integration-svc
         collect_metrics: "true"
@@ -18,6 +19,7 @@ items:
         metadata:
           labels:
             svc: router-svc
+            app-owner: fsi-fraud-detection
             group: integration-svc
             collect_metrics: "true"
         spec:
@@ -52,6 +54,8 @@ items:
     apiVersion: v1
     metadata:
       name: metrics-router-svc
+      labels:
+        app-owner: fsi-fraud-detection
     spec:
       ports:
         - protocol: TCP

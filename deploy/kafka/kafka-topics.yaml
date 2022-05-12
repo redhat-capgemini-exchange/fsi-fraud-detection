@@ -7,6 +7,7 @@ items:
       name: tx-inbox
       labels:
         strimzi.io/cluster: transactions
+        app-owner: fsi-fraud-detection-kafka
       #namespace: fsi-fraud-detection
     spec:
       config:
@@ -22,6 +23,7 @@ items:
       name: tx
       labels:
         strimzi.io/cluster: transactions
+        app-owner: fsi-fraud-detection-kafka
       #namespace: fsi-fraud-detection
     spec:
       config:
@@ -37,6 +39,7 @@ items:
       name: tx-fraud
       labels:
         strimzi.io/cluster: transactions
+        app-owner: fsi-fraud-detection-kafka
       #namespace: fsi-fraud-detection
     spec:
       config:
@@ -53,6 +56,7 @@ items:
       name: tx-audit
       labels:
         strimzi.io/cluster: transactions
+        app-owner: fsi-fraud-detection-kafka
       #namespace: fsi-fraud-detection
     spec:
       config:
@@ -68,6 +72,7 @@ items:
       name: tx-archive
       labels:
         strimzi.io/cluster: transactions
+        app-owner: fsi-fraud-detection-kafka
       #namespace: fsi-fraud-detection
     spec:
       config:

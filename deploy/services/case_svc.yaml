@@ -7,6 +7,7 @@ items:
       name: case-svc
       labels:
         svc: case-svc
+        app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
         group: integration-svc
         collect_metrics: "true"
@@ -18,6 +19,7 @@ items:
         metadata:
           labels:
             svc: case-svc
+            app-owner: fsi-fraud-detection
             group: integration-svc
             collect_metrics: "true"
         spec:
@@ -44,6 +46,8 @@ items:
     apiVersion: v1
     metadata:
       name: metrics-case-svc
+      labels:
+        app-owner: fsi-fraud-detection
     spec:
       ports:
         - protocol: TCP

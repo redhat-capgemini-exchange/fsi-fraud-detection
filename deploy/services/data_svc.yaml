@@ -4,6 +4,7 @@ metadata:
   name: data-svc
   labels:
     svc: data-svc
+    app-owner: fsi-fraud-detection
     app.openshift.io/runtime: python
     group: integration-svc
 spec:
@@ -14,6 +15,7 @@ spec:
     metadata:
       labels:
         svc: data-svc
+        app-owner: fsi-fraud-detection
         group: integration-svc
     spec:
       containers:

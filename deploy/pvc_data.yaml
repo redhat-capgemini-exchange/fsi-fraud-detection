@@ -4,6 +4,7 @@ metadata:
   name: datalake
   labels:
     app: fsi-fraud-detection
+    app-owner: fsi-fraud-detection
 spec:
   accessModes:
     - ReadWriteOnce

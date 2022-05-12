@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: cluster-monitoring-config
   namespace: openshift-monitoring
+  labels:
+    app-owner: fsi-fraud-detection-monitoring
 data:
   config.yaml: |
     enableUserWorkload: true
