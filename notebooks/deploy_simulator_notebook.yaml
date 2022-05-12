@@ -37,9 +37,9 @@ items:
               
               volumeMounts:
                 - name: datalake-archive
-                  mountPath: '/opt/app-root/src/data'
+                  mountPath: '/opt/app-root/data/archive'
                 - name: ml-models
-                  mountPath: '/opt/app-root/src/models'
+                  mountPath: '/opt/app-root/data/models'
 
               env:
                 - name: JUPYTER_PORT

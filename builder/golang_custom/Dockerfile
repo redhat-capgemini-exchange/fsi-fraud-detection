@@ -5,6 +5,7 @@ ENV NAME=golang \
     GO_MINOR_VERSION=16 \
     GO_PATCH_VERSION=12 \
     CONTAINER_NAME="rhel8/go-toolset" \
+    DATA_ROOT=/opt/app-root/data \
     APP_FILE="main.go"
 
 # Define the VERSION environment variable in a separate step, so we can
@@ -24,6 +25,10 @@ LABEL summary="$SUMMARY" \
       name="$CONTAINER_NAME" \
       version="$VERSION"
 
+RUN mkdir -p ${DATA_ROOT}
+RUN chown -R 1001:0 ${DATA_ROOT} && \
+    fix-permissions ${DATA_ROOT} -P
+    
 RUN INSTALL_PKGS="go-toolset" && \
     yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
