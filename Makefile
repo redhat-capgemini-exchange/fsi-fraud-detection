@@ -28,6 +28,15 @@ deploy_services:
 	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
 
+
+
+
+
+
+#
+# OLD
+#
+
 .PHONY: deploy_notebooks
 deploy_notebooks:
 	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
@@ -72,7 +81,7 @@ apply_config:
 .PHONY: prepare_images
 prepare_images:
 	oc apply -f builder/image_golang.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/image_notebook.yaml -n ${BUILD_NAMESPACE}
+	# NOT USED: oc apply -f builder/image_notebook.yaml -n ${BUILD_NAMESPACE}
 
 .PHONY: apply_build
 apply_build:
