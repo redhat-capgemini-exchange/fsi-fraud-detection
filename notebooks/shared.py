@@ -69,7 +69,7 @@ def load_transactions(file_collection, cutoff_date=None, time_window=-1):
     return td_df
 
 
-def upload_transactions(bridge, topic='tx-inbox', start='2020-04-01', end='2020-04-02', loc='../data/simulated/pkl/', batch_size=100):
+def upload_transactions(bridge, topic='tx-inbox', start='2020-05-01', end='2020-05-01', loc='./data/simulated/pkl/', batch_size=100):
 
     KAFKA_ENDPOINT = f"{bridge}/topics/{topic}"
     KAFKA_HEADERS = {'content-type': 'application/vnd.kafka.json.v2+json'}
@@ -121,7 +121,7 @@ def upload_transactions(bridge, topic='tx-inbox', start='2020-04-01', end='2020-
 
 
 
-def post_transactions(endpoint, start='2020-04-01', end='2020-04-02', loc='../data/archive/audit/', batch_size=1):
+def post_transactions(endpoint, start='2020-05-01', end='2020-05-01', loc='./data/archive/audit/', batch_size=1):
     files = []
     if loc.endswith('.csv'):
         files = [DIR_INPUT]

@@ -72,10 +72,10 @@ config_monitoring:
 	
 .PHONY: prepare_images
 prepare_images:
-	oc import-image ubi8/s2i-base:1-343 --from=registry.access.redhat.com/ubi8/s2i-base:1-343 -n ${BUILD_NAMESPACE}
-	oc import-image ubi8/s2i-base:latest --from=registry.access.redhat.com/ubi8/s2i-base:1-343 -n ${BUILD_NAMESPACE}
-	oc import-image ubi8/python-39:1-51 --from=registry.access.redhat.com/ubi8/python-39:1-51 -n ${BUILD_NAMESPACE}
-	oc import-image ubi8/python-39:latest --from=registry.access.redhat.com/ubi8/python-39:1-51 -n ${BUILD_NAMESPACE}
+	oc import-image ubi8/s2i-base:1-343 --from=registry.access.redhat.com/ubi8/s2i-base:1-343 --confirm -n ${BUILD_NAMESPACE}
+	oc import-image ubi8/s2i-base:latest --from=registry.access.redhat.com/ubi8/s2i-base:1-343 --confirm -n ${BUILD_NAMESPACE}
+	oc import-image ubi8/python-39:1-51 --from=registry.access.redhat.com/ubi8/python-39:1-51 --confirm -n ${BUILD_NAMESPACE}
+	oc import-image ubi8/python-39:latest --from=registry.access.redhat.com/ubi8/python-39:1-51 --confirm -n ${BUILD_NAMESPACE}
 	oc apply -f builder/build_golang_base.yaml -n ${BUILD_NAMESPACE}
 	# NOT USED WITH ODH: oc apply -f builder/build_notebook_base.yaml -n ${BUILD_NAMESPACE}
 
@@ -118,16 +118,3 @@ rollout_svc:
 rollout_apps:
 	oc rollout latest dc/fraud-app -n ${PROD_NAMESPACE}
 	oc rollout latest dc/rules-app -n ${PROD_NAMESPACE}
-
-#
-# DEPRECATED
-#
-
-.PHONY: deploy_notebooks
-deploy_notebooks:
-	oc apply -f notebooks/deploy_simulator_notebook.yaml -n ${PROD_NAMESPACE}
-	
-.PHONY: prepare_notebooks
-prepare_notebooks:
-	oc apply -f notebooks/notebook_secrets.yaml -n ${PROD_NAMESPACE}
-	oc apply -f notebooks/build_simulator_notebook.yaml -n ${BUILD_NAMESPACE}
