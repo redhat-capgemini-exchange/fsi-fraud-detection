@@ -10,9 +10,8 @@ See deploy/README.md
 
 ### Deploy the notebooks
 
-```shell
-make deploy_notebooks
-```
+* Create a new Jupyther Notebook instance in project `fsi-fraud-detection-dev'.
+* Import GitHub repo `https://github.com/redhat-capgemini-exchange/fsi-fraud-detection`
 
 ### Run the notebooks
 
@@ -25,9 +24,12 @@ To create a first ML model:
 
 * 03_train_model.ipynb
 
-Note: Stop the notebook server after creating the data !
+Replay transaction data:
 
-### References
+* 04_upload_transactions.ipynb
+
+
+## References
 
 * [Fraud detection with machine learning](https://www.researchgate.net/project/Fraud-detection-with-machine-learning)
 * [Reproducible Machine Learning for Credit Card Fraud Detection - Practical Handbook](https://fraud-detection-handbook.github.io/fraud-detection-handbook/Foreword.html)
@@ -39,7 +41,8 @@ Note: Stop the notebook server after creating the data !
 * [https://github.com/googleapis/python-storage](googleapis python-storage)
 * [https://cloud.google.com/storage/docs/reference/libraries#client-libraries-install-python](Cloud Storage client libraries)
 
-### Local development
+
+## Local development
 
 #### Python virtual environment
 
