@@ -21,7 +21,7 @@ items:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: "golang-custom:1.16.12"
+            name: "golang-base:1.16.12"
             #namespace: openshift
           env:
             - name: BUILD_DIR

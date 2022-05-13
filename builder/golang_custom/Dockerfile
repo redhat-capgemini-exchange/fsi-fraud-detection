@@ -1,5 +1,3 @@
-#FROM ubi8/s2i-base:1-339
-#FROM registry.access.redhat.com/ubi8/s2i-base:1-343
 FROM image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/s2i-base:latest
 
 ENV NAME=golang \

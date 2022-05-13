@@ -4,7 +4,7 @@ items:
   - kind: BuildConfig
     apiVersion: build.openshift.io/v1
     metadata:
-      name: base-notebook
+      name: notebook-base
       labels:
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
@@ -13,7 +13,7 @@ items:
         git:
           ref: main
           uri: "https://github.com/myanalyticalengine/jupyter-stacks"
-        contextDir: base-notebook
+        contextDir: notebook-base
         type: Git
       strategy:
         type: Docker
@@ -22,7 +22,7 @@ items:
       output:
         to:
           kind: ImageStreamTag
-          name: base-notebook:1.0.0
+          name: notebook-base:1.0.0
       triggers:
         - type: ImageChange
           imageChange: {}
@@ -31,9 +31,9 @@ items:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
-      name: base-notebook
+      name: notebook-base
       labels:
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
       annotations:
-        description: base-notebook builder image
+        description: notebook-base builder image
