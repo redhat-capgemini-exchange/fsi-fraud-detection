@@ -131,7 +131,7 @@ producer = KafkaProducer(bootstrap_servers=[
 print(f" --> listening on topic '{SOURCE_TOPIC}'")
 
 for msg in consumer:
-    # no idea, why we need a dubble loads ...
+    # no idea, why we need the doubble loads ...
     tx = loads(msg.value)
 
     # add the new tx to the in-memory 'database'

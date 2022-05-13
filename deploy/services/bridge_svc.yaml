@@ -1,27 +1,27 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: data-svc
+  name: bridge-svc
   labels:
-    svc: data-svc
+    svc: bridge-svc
     app-owner: fsi-fraud-detection
     app.openshift.io/runtime: python
     group: integration-svc
 spec:
   selector:
-    svc: data-svc
+    svc: bridge-svc
   replicas: 1
   template:
     metadata:
       labels:
-        svc: data-svc
+        svc: bridge-svc
         app-owner: fsi-fraud-detection
         group: integration-svc
     spec:
       containers:
-        - name: data-svc
+        - name: bridge-svc
           image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/data-svc:latest
+            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/bridge-svc:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
@@ -31,9 +31,9 @@ spec:
               value: 'app.py'
             
             - name: source_topic
-              value: 'tx-inbox'
+              value: 'tx-sim'
             - name: target_topic
-              value: 'tx'
+              value: 'tx-inbox'
               
             - name: client_id
               value: 'data_svc'

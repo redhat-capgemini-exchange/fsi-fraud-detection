@@ -22,16 +22,19 @@ prepare_build:
 	oc apply -f builder/rules_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/fraud_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/archive_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/bridge_svc.yaml -n ${BUILD_NAMESPACE}
 
 # step4
 .PHONY: deploy_services
 deploy_services:
 	oc apply -f deploy/services/archive_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/audit_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/case_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/router_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/bridge_svc.yaml -n ${PROD_NAMESPACE}
 
 
 # basics to prepare the environment and the build tasks
