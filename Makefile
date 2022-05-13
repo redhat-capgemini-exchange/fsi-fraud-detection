@@ -80,6 +80,8 @@ apply_config:
 
 .PHONY: prepare_images
 prepare_images:
+	oc import-image ubi8/s2i-base:1-343 --from=registry.access.redhat.com/ubi8/s2i-base:1-343 --confirm
+	oc import-image ubi8/s2i-base:latest --from=registry.access.redhat.com/ubi8/s2i-base:1-343 --confirm
 	oc apply -f builder/image_golang.yaml -n ${BUILD_NAMESPACE}
 	# NOT USED: oc apply -f builder/image_notebook.yaml -n ${BUILD_NAMESPACE}
 
