@@ -47,6 +47,8 @@ def predict(args_dict):
     if p >= TX_FRAUD_THRESHOLD:
         fraud = 1
         scenario = TX_FRAUD_SCENARIO
+        print(
+            f" --> potential fraudulent TX '{args_dict.get('TRANSACTION_ID')}': {args_dict}")
 
     return {
         'TRANSACTION_ID': args_dict.get('TRANSACTION_ID'),

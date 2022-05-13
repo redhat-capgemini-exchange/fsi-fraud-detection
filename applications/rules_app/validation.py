@@ -1,7 +1,7 @@
 import os
 
-TX_FRAUD_THRESHOLD = float(os.getenv('tx_fraud_threshold','220.0'))
-TX_FRAUD_SCENARIO = int(os.getenv('tx_fraud_scenario','1'))
+TX_FRAUD_THRESHOLD = float(os.getenv('tx_fraud_threshold', '220.0'))
+TX_FRAUD_SCENARIO = int(os.getenv('tx_fraud_scenario', '1'))
 
 
 def validate(args_dict):
