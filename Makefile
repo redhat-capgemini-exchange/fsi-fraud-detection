@@ -104,6 +104,7 @@ undeploy_all: cleanup
 .PHONY: build_all
 build_all:
 	oc start-build golang-base -n ${BUILD_NAMESPACE}
+	oc start-build bridge-svc -n ${BUILD_NAMESPACE}
 	oc start-build data-svc -n ${BUILD_NAMESPACE}
 	oc start-build rules-app -n ${BUILD_NAMESPACE}
 	oc start-build fraud-app -n ${BUILD_NAMESPACE}
@@ -116,7 +117,9 @@ rollout_svc:
 	oc rollout latest dc/data-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/router-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/case-svc -n ${PROD_NAMESPACE}
+	oc rollout latest dc/audit-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/archive-svc -n ${PROD_NAMESPACE}
+	oc rollout latest dc/bridge-svc -n ${PROD_NAMESPACE}
 
 .PHONY: rollout_apps
 rollout_apps:
