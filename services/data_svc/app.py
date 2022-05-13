@@ -132,7 +132,8 @@ print(f" --> listening on topic '{SOURCE_TOPIC}'")
 
 for msg in consumer:
     # no idea, why we need the doubble loads ...
-    tx = loads(msg.value)
+    #tx = loads(msg.value)
+    tx = msg.value
 
     # add the new tx to the in-memory 'database'
     tx_history = tx_history.append(prepare(tx), ignore_index=True)
