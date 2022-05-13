@@ -4,7 +4,7 @@ items:
   - kind: BuildConfig
     apiVersion: build.openshift.io/v1
     metadata:
-      name: golang-custom
+      name: golang-base
       labels:
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
@@ -22,7 +22,7 @@ items:
       output:
         to:
           kind: ImageStreamTag
-          name: golang-custom:1.16.12
+          name: golang-base:1.16.12
       triggers:
         - type: ImageChange
           imageChange: {}
@@ -31,9 +31,9 @@ items:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
-      name: golang-custom
+      name: golang-base
       labels:
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
       annotations:
-        description: golang-custom builder image
+        description: golang-base builder image

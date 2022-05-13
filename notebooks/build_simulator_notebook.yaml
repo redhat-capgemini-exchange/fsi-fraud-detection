@@ -22,7 +22,7 @@ items:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: "base-notebook:1.0.0"
+            name: "notebook-base:1.0.0"
             #namespace: openshift
           #env:
           #  - name: NOTEBOOK_VERSION
