@@ -23,7 +23,7 @@ items:
           from:
             kind: ImageStreamTag
             name: "python:3.9-ubi8"
-            namespace: openshift
+            #namespace: openshift
           env: []
       output:
         to:
