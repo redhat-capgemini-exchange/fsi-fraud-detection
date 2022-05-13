@@ -10,7 +10,7 @@ See deploy/README.md
 
 ### Deploy the notebooks
 
-* Create a new Jupyther Notebook instance in project `fsi-fraud-detection-dev'.
+* Create a new Jupyther Notebook instance in project `fsi-fraud-detection-dev`.
 * Import GitHub repo `https://github.com/redhat-capgemini-exchange/fsi-fraud-detection`
 
 ### Run the notebooks
