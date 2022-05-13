@@ -26,8 +26,8 @@ items:
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: "python:3.9-ubi8"
-            namespace: openshift
+            name: "python-39:latest"
+            #namespace: openshift
           env: []
           volumeMounts:
             - name: fraud-model

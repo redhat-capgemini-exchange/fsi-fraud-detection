@@ -1,4 +1,4 @@
-FROM ubi8/s2i-base:1-339
+FROM image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/s2i-base:latest
 
 ENV NAME=golang \
     GO_MAJOR_VERSION=1 \
