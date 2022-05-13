@@ -1,4 +1,5 @@
-FROM registry.access.redhat.com/ubi8/s2i-base:1-343
+#FROM ubi8/s2i-base:1-339
+FROM s2i-base:latest
 
 ENV NAME=golang \
     GO_MAJOR_VERSION=1 \
