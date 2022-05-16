@@ -37,7 +37,7 @@ items:
                     name: fsi-fraud-detection-config
               env:
                 - name: source_topic
-                  value: "tx-inbox"
+                  value: "tx"
 
                 - name: client_id
                   value: "archive_svc"
@@ -47,7 +47,7 @@ items:
                 - name: target_location
                   value: "/opt/app-root/data"
                 - name: target_prefix
-                  value: inbox
+                  value: audit
 
               volumeMounts:
                 - name: datalake-archive

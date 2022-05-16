@@ -17,7 +17,7 @@ prepare_infra: config_infra apply_config config_kafka config_monitoring prepare_
 # step3
 .PHONY: prepare_build
 prepare_build:
-	oc apply -f builder/data_svc.yaml -n ${BUILD_NAMESPACE}
+#oc apply -f builder/data_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/case_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/router_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/rules_app.yaml -n ${BUILD_NAMESPACE}
@@ -34,7 +34,7 @@ deploy_services:
 	oc apply -f deploy/services/router_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
+#oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/bridge_svc.yaml -n ${PROD_NAMESPACE}
 
 
@@ -105,7 +105,7 @@ undeploy_all: cleanup
 build_all:
 	oc start-build golang-base -n ${BUILD_NAMESPACE}
 	oc start-build bridge-svc -n ${BUILD_NAMESPACE}
-	oc start-build data-svc -n ${BUILD_NAMESPACE}
+#oc start-build data-svc -n ${BUILD_NAMESPACE}
 	oc start-build rules-app -n ${BUILD_NAMESPACE}
 	oc start-build fraud-app -n ${BUILD_NAMESPACE}
 
@@ -114,7 +114,7 @@ rollout_all: rollout_apps rollout_svc
 
 .PHONY: rollout_svc
 rollout_svc:
-	oc rollout latest dc/data-svc -n ${PROD_NAMESPACE}
+#oc rollout latest dc/data-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/router-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/case-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/audit-svc -n ${PROD_NAMESPACE}

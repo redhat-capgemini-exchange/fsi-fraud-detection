@@ -18,6 +18,21 @@ CUSTOMER_ID_NB_TX_1DAY_WINDOW,CUSTOMER_ID_AVG_AMOUNT_1DAY_WINDOW,CUSTOMER_ID_NB_
 type (
 	Transaction struct {
 		// basic TX data
+		TRANSACTION_ID int64
+		TX_DATETIME    int64
+		CUSTOMER_ID    int
+		TERMINAL_ID    int
+		TX_AMOUNT      float64
+		// fraud facts and predictions
+		TX_FRAUD          int
+		TX_FRAUD_SCENARIO int
+		// prediction data, used to evaluate the model performance
+		TX_FRAUD_PREDICTION  int
+		TX_FRAUD_PROBABILITY float64
+	}
+
+	ExtTransaction struct {
+		// basic TX data
 		TRANSACTION_ID  int64
 		TX_DATETIME     int64
 		CUSTOMER_ID     int
@@ -58,6 +73,18 @@ var (
 		"CUSTOMER_ID",
 		"TERMINAL_ID",
 		"TX_AMOUNT",
+		"TX_FRAUD",
+		"TX_FRAUD_SCENARIO",
+		"TX_FRAUD_PREDICTION",
+		"TX_FRAUD_PROBABILITY",
+	}
+
+	ExtArchiveHeader = []string{
+		"TRANSACTION_ID",
+		"TX_DATETIME",
+		"CUSTOMER_ID",
+		"TERMINAL_ID",
+		"TX_AMOUNT",
 		"TX_TIME_SECONDS",
 		"TX_TIME_DAYS",
 		"TX_FRAUD",
@@ -82,6 +109,20 @@ var (
 )
 
 func (tx *Transaction) ToArray() []string {
+	return []string{
+		fmt.Sprintf("%d", tx.TRANSACTION_ID),
+		fmt.Sprintf("%d", tx.TX_DATETIME),
+		fmt.Sprintf("%d", tx.CUSTOMER_ID),          //"CUSTOMER_ID",
+		fmt.Sprintf("%d", tx.TERMINAL_ID),          //"TERMINAL_ID",
+		fmt.Sprintf("%f", tx.TX_AMOUNT),            //"TX_AMOUNT",
+		fmt.Sprintf("%d", tx.TX_FRAUD),             //"TX_FRAUD",
+		fmt.Sprintf("%d", tx.TX_FRAUD_SCENARIO),    //"TX_FRAUD_SCENARIO",
+		fmt.Sprintf("%d", tx.TX_FRAUD_PREDICTION),  //"TX_FRAUD_PREDICTION",
+		fmt.Sprintf("%f", tx.TX_FRAUD_PROBABILITY), //"TX_FRAUD_PROBABILITY",
+	}
+}
+
+func (tx *ExtTransaction) ToArray() []string {
 	return []string{
 		fmt.Sprintf("%d", tx.TRANSACTION_ID),
 		fmt.Sprintf("%d", tx.TX_DATETIME),

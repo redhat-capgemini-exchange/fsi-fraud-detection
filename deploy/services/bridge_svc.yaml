@@ -33,7 +33,7 @@ spec:
             - name: source_topic
               value: 'tx-sim'
             - name: target_topic
-              value: 'tx-inbox'
+              value: 'tx'
               
             - name: client_id
               value: 'data_svc'

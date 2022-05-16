@@ -103,8 +103,8 @@ def transform(tx):
     tx['TX_FRAUD'] = -1
     tx['TX_FRAUD_SCENARIO'] = -1
 
-    # Keep it out of the tx data as since we can't calculate it at this point in time
-    # The terminal risk can only be calculated once the fraud assessment has taken place.
+    # Keep it out of the tx data since we can't calculate it at this point in time
+    # The terminal risk can only be calculated once a fraud assessment has been made.
     #tx['TERMINAL_ID_NB_TX_1DAY_WINDOW'] = 0
     #tx['TERMINAL_ID_RISK_1DAY_WINDOW'] = 0
     #tx['TERMINAL_ID_NB_TX_7DAY_WINDOW'] = 0
@@ -131,8 +131,6 @@ producer = KafkaProducer(bootstrap_servers=[
 print(f" --> listening on topic '{SOURCE_TOPIC}'")
 
 for msg in consumer:
-    # no idea, why we need the doubble loads ...
-    #tx = loads(msg.value)
     tx = msg.value
 
     # add the new tx to the in-memory 'database'
