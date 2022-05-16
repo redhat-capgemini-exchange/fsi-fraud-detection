@@ -38,6 +38,8 @@ items:
               env:
                 - name: source_topic
                   value: "tx-fraud-sim"
+                - name: batch_size
+                  value: 50
 
                 - name: client_id
                   value: "archive_fraud_svc"

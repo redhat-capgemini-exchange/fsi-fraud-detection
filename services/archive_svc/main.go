@@ -45,6 +45,9 @@ func main() {
 	promHost := env.GetString("prom_host", "0.0.0.0:2112")
 	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
 
+	// batch size
+	batchSize := env.GetInt("batch_size", 1000)
+
 	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
 		Name: "fraud_processed_transactions",
 		Help: "The number of processed transactions",
@@ -82,7 +85,6 @@ func main() {
 	out, location := newFile(archiveLocation, archiveLocationPrefix)
 	writer := csv.NewWriter(out)
 	writer.Write(internal.ArchiveHeader)
-	batchSize := 1000
 	num := 0
 
 	fmt.Printf(" --> archiving to %s\n", location)
