@@ -23,7 +23,7 @@ prepare_build:
 	oc apply -f builder/rules_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/fraud_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/archive_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/bridge_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/demo/bridge_svc.yaml -n ${BUILD_NAMESPACE}
 
 # step4
 .PHONY: deploy_services
@@ -111,8 +111,8 @@ build_all:
 
 .PHONY: deploy_demo_services
 deploy_demo_services:
-	oc apply -f deploy/services/bridge_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/bridge_fraud_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/demo/bridge_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/demo/bridge_fraud_svc.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: rollout_all
 rollout_all: rollout_apps rollout_svc rollout_demo_svc
