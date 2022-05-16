@@ -159,8 +159,6 @@ def upload_fraud(bridge, topic='tx-fraud-sim', start='2020-04-01', end='2020-04-
             for r in batch:
                 record = {'value': r.to_json()}
                 payload['records'].append(record)
-
-            print(payload)
             
             # post the payload with backoff/retry in case the bridge gets overloaded ...
             try:
