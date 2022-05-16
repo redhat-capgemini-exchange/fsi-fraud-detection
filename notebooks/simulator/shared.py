@@ -76,11 +76,6 @@ def upload_transactions(bridge, topic='tx-sim', start='2020-05-01', end='2020-05
 
     # read the raw transaction data
     transactions_df = read_from_pkl(loc, start, end)
-
-    # remove the TX_FRAUD,TX_FRAUD_SCENARIO columns in order to simulate a 'new' transaction
-    transactions_df = transactions_df.drop(
-        ['TX_TIME_SECONDS', 'TX_TIME_DAYS', 'TX_FRAUD', 'TX_FRAUD_SCENARIO'], axis=1)
-
     NUM_TX = len(transactions_df)
 
     batch = []
