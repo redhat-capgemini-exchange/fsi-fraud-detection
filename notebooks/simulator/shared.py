@@ -34,7 +34,7 @@ def read_from_pkl(input_dir, begin_date, end_date):
 def read_from_csv(input_dir, begin_date, end_date):
 
     files = [os.path.join(input_dir, f) for f in os.listdir(
-        input_dir) if f >= begin_date+'.csv' and f <= end_date+'.csv']
+        input_dir) if f >= begin_date+'_fraud.csv' and f <= end_date+'_fraud.csv']
 
     frames = []
     for f in files:

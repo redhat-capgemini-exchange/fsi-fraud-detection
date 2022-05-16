@@ -29,6 +29,7 @@ prepare_build:
 .PHONY: deploy_services
 deploy_services:
 	oc apply -f deploy/services/archive_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/archive_fraud_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/audit_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/case_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/router_svc.yaml -n ${PROD_NAMESPACE}
