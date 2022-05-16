@@ -37,9 +37,9 @@ items:
                     name: fsi-fraud-detection-config
               env:
                 - name: source_topic
-                  value: "tx-fraud-sim"
+                  value: "tx-fraud"
                 - name: batch_size
-                  value: 50
+                  value: "50"
 
                 - name: client_id
                   value: "archive_fraud_svc"

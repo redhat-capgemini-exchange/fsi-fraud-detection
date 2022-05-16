@@ -1,25 +1,25 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
-  name: bridge-svc
+  name: bridge-fraud-svc
   labels:
-    svc: bridge-svc
+    svc: bridge-fraud-svc
     app-owner: fsi-fraud-detection
     app.openshift.io/runtime: python
     group: demo-svc
 spec:
   selector:
-    svc: bridge-svc
+    svc: bridge-fraud-svc
   replicas: 1
   template:
     metadata:
       labels:
-        svc: bridge-svc
+        svc: bridge-fraud-svc
         app-owner: fsi-fraud-detection
         group: integration-svc
     spec:
       containers:
-        - name: bridge-svc
+        - name: bridge-fraud-svc
           image: >-
             image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/bridge-svc:latest
           imagePullPolicy: Always
@@ -31,9 +31,9 @@ spec:
               value: 'app.py'
             
             - name: source_topic
-              value: 'tx-sim'
+              value: 'tx-fraud-sim'
             - name: target_topic
-              value: 'tx'
+              value: 'tx-fraud'
               
             - name: client_id
               value: 'data_svc'

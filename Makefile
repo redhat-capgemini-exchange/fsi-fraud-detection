@@ -36,7 +36,6 @@ deploy_services:
 	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
 #oc apply -f deploy/services/data_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/bridge_svc.yaml -n ${PROD_NAMESPACE}
 
 
 # basics to prepare the environment and the build tasks
@@ -110,8 +109,13 @@ build_all:
 	oc start-build rules-app -n ${BUILD_NAMESPACE}
 	oc start-build fraud-app -n ${BUILD_NAMESPACE}
 
+.PHONY: deploy_demo_services
+deploy_demo_services:
+	oc apply -f deploy/services/bridge_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/bridge_fraud_svc.yaml -n ${PROD_NAMESPACE}
+
 .PHONY: rollout_all
-rollout_all: rollout_apps rollout_svc
+rollout_all: rollout_apps rollout_svc rollout_demo_svc
 
 .PHONY: rollout_svc
 rollout_svc:
@@ -120,9 +124,13 @@ rollout_svc:
 	oc rollout latest dc/case-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/audit-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/archive-svc -n ${PROD_NAMESPACE}
-	oc rollout latest dc/bridge-svc -n ${PROD_NAMESPACE}
 
 .PHONY: rollout_apps
 rollout_apps:
 	oc rollout latest dc/fraud-app -n ${PROD_NAMESPACE}
 	oc rollout latest dc/rules-app -n ${PROD_NAMESPACE}
+
+.PHONY: rollout_demo_svc
+rollout_demo_svc:
+	oc rollout latest dc/bridge-svc -n ${PROD_NAMESPACE}
+	oc rollout latest dc/bridge-fraud-svc -n ${PROD_NAMESPACE}
