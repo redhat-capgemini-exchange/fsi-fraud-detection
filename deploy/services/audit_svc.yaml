@@ -38,12 +38,10 @@ items:
               env:
                 - name: source_topic
                   value: "tx"
-
                 - name: client_id
                   value: "audit_svc"
                 - name: group_id
                   value: "archive_svc"
-
                 - name: target_location
                   value: "/opt/app-root/data"
                 - name: target_prefix

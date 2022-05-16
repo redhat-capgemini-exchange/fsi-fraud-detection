@@ -36,7 +36,6 @@ items:
                   value: "tx-fraud"
                 - name: target_topic
                   value: "tx-archive"
-
                 - name: client_id
                   value: "case_svc"
                 - name: group_id

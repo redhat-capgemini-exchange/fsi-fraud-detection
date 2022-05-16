@@ -4,56 +4,59 @@ items:
   - kind: DeploymentConfig
     apiVersion: apps.openshift.io/v1
     metadata:
-      name: router-svc
+      name: audit-fraud-svc
       labels:
-        svc: router-svc
+        svc: audit-fraud-svc
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
         group: integration-svc
         collect_metrics: "true"
     spec:
       selector:
-        svc: router-svc
+        svc: audit-fraud-svc
       replicas: 1
       template:
         metadata:
           labels:
-            svc: router-svc
+            svc: audit-fraud-svc
             app-owner: fsi-fraud-detection
             group: integration-svc
             collect_metrics: "true"
         spec:
+          volumes:
+            - name: datalake-archive
+              persistentVolumeClaim:
+                claimName: datalake
           containers:
-            - name: router-svc
+            - name: audit-fraud-svc
               image: >-
-                image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/router-svc:latest
+                image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/archive-svc:latest
               imagePullPolicy: Always
               envFrom:
                 - configMapRef:
                     name: fsi-fraud-detection-config
               env:
                 - name: source_topic
-                  value: 'tx'
-                  
-                - name: archive_topic
-                  value: 'tx-archive'
-                - name: fraud_topic
-                  value: 'tx-fraud'
-
-                - name: rules_app_svc
-                  value: "http://rules-app-svc.fsi-fraud-detection.svc.cluster.local:8080/validate"
-                - name: fraud_app_svc
-                  value: "http://fraud-app-svc.fsi-fraud-detection.svc.cluster.local:8080/predict"
-
+                  value: "tx-fraud"
+                - name: batch_size
+                  value: "50"
                 - name: client_id
-                  value: 'router_svc'
+                  value: "archive_fraud_svc"
                 - name: group_id
-                  value: 'router_svc'
+                  value: "archive_svc"
+                - name: target_location
+                  value: "/opt/app-root/data"
+                - name: target_prefix
+                  value: fraud
+
+              volumeMounts:
+                - name: datalake-archive
+                  mountPath: "/opt/app-root/src/data"
 
   - kind: Service
     apiVersion: v1
     metadata:
-      name: metrics-router-svc
+      name: metrics-audit-fraud-svc
       labels:
         app-owner: fsi-fraud-detection
     spec:
@@ -63,5 +66,5 @@ items:
           targetPort: 2112
           name: metrics
       selector:
-        svc: router-svc
+        svc: audit-fraud-svc
       type: ClusterIP
