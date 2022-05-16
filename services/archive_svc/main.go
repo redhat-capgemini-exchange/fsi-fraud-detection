@@ -46,7 +46,7 @@ func main() {
 	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
 
 	// batch size
-	batchSize := env.GetInt("batch_size", 1000)
+	batchSize := int(env.GetInt("batch_size", 1000))
 
 	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
 		Name: "fraud_processed_transactions",
