@@ -40,7 +40,7 @@ items:
                   value: "tx"
 
                 - name: client_id
-                  value: "archive_svc"
+                  value: "audit_svc"
                 - name: group_id
                   value: "archive_svc"
 

@@ -97,3 +97,19 @@ items:
       partitions: 10
       replicas: 3
       topicName: tx-sim
+
+  - kind: KafkaTopic
+    apiVersion: kafka.strimzi.io/v1beta2
+    metadata:
+      name: tx-fraud-sim
+      labels:
+        strimzi.io/cluster: transactions
+        app-owner: fsi-fraud-detection-kafka
+      #namespace: fsi-fraud-detection
+    spec:
+      config:
+        retention.ms: 604800000
+        segment.bytes: 1073741824
+      partitions: 10
+      replicas: 3
+      topicName: tx-fraud-sim
