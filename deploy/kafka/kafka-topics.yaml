@@ -8,7 +8,6 @@ items:
       labels:
         strimzi.io/cluster: transactions
         app-owner: fsi-fraud-detection-kafka
-      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 604800000
@@ -24,7 +23,6 @@ items:
       labels:
         strimzi.io/cluster: transactions
         app-owner: fsi-fraud-detection-kafka
-      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 604800000
@@ -40,7 +38,6 @@ items:
       labels:
         strimzi.io/cluster: transactions
         app-owner: fsi-fraud-detection-kafka
-      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 604800000
@@ -57,7 +54,6 @@ items:
       labels:
         strimzi.io/cluster: transactions
         app-owner: fsi-fraud-detection-kafka
-      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 2419200000
@@ -69,11 +65,25 @@ items:
   - kind: KafkaTopic
     apiVersion: kafka.strimzi.io/v1beta2
     metadata:
+      name: tx-audit-fraud
+      labels:
+        strimzi.io/cluster: transactions
+        app-owner: fsi-fraud-detection-kafka
+    spec:
+      config:
+        retention.ms: 604800000
+        segment.bytes: 1073741824
+      partitions: 10
+      replicas: 3
+      topicName: tx-audit-fraud
+
+  - kind: KafkaTopic
+    apiVersion: kafka.strimzi.io/v1beta2
+    metadata:
       name: tx-archive
       labels:
         strimzi.io/cluster: transactions
         app-owner: fsi-fraud-detection-kafka
-      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 2419200000
@@ -89,7 +99,6 @@ items:
       labels:
         strimzi.io/cluster: transactions
         app-owner: fsi-fraud-detection-kafka
-      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 604800000
@@ -105,7 +114,6 @@ items:
       labels:
         strimzi.io/cluster: transactions
         app-owner: fsi-fraud-detection-kafka
-      #namespace: fsi-fraud-detection
     spec:
       config:
         retention.ms: 604800000
@@ -114,18 +122,3 @@ items:
       replicas: 3
       topicName: tx-fraud-sim
 
-  - kind: KafkaTopic
-    apiVersion: kafka.strimzi.io/v1beta2
-    metadata:
-      name: tx-fraud
-      labels:
-        strimzi.io/cluster: transactions
-        app-owner: fsi-fraud-detection-kafka
-      #namespace: fsi-fraud-detection
-    spec:
-      config:
-        retention.ms: 604800000
-        segment.bytes: 1073741824
-      partitions: 10
-      replicas: 3
-      topicName: tx-fraud

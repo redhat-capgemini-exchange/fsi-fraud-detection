@@ -70,7 +70,7 @@ func init() {
 	}
 	uploader = s3manager.NewUploader(sess)
 
-	// prometheus collectors
+	// metrics collectors
 	opsTxProcessed = promauto.NewCounter(prometheus.CounterOpts{
 		Name: "fraud_processed_transactions",
 		Help: "The number of processed transactions",
@@ -132,7 +132,7 @@ func main() {
 				writer.Flush()
 				out.Close()
 
-				// upload the file to S3
+				// upload the file in the background
 				go upload(location)
 
 				// start the new batch
@@ -189,7 +189,7 @@ func upload(path string) {
 	}
 	defer file.Close()
 
-	fmt.Printf(" --> uploading '%s' to '%s/%s'\n", path, bucketName, location)
+	fmt.Printf(" --> uploading '%s' to 's3://%s/%s'\n", filename, bucketName, location)
 
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket: aws.String(bucketName),

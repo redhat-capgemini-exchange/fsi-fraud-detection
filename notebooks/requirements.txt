@@ -8,10 +8,10 @@ xgboost==1.5.2
 pyarrow==7.0.0
 boto3==1.21.13
 kafka-python==2.0.2
-google-cloud-storage==2.3.0
 # coding support
 cloudpickle==2.0.0 
 requests==2.27.1
+python-dotenv==0.20.0
 # graphics
 altair==4.2.0 
 vega==3.6.0

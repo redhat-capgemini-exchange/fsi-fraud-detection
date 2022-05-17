@@ -11,8 +11,7 @@ create_namespaces:
 
 # step2
 .PHONY: prepare_infra
-prepare_infra: config_infra apply_config config_kafka prepare_images
-#config_monitoring
+prepare_infra: config_infra apply_config config_kafka prepare_images config_monitoring
 #oc apply -f deploy/open-data-hub.yaml -n ${DEV_NAMESPACE}
 
 # step3

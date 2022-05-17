@@ -37,7 +37,7 @@ items:
                     name: fsi-fraud-detection-config
               env:
                 - name: source_topic
-                  value: "tx-fraud"
+                  value: "tx-audit-fraud"
                 - name: batch_size
                   value: "50"
                 - name: client_id

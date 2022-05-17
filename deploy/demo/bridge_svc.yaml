@@ -29,12 +29,10 @@ spec:
           env:
             - name: 'APP_FILE'
               value: 'app.py'
-            
             - name: source_topic
               value: 'tx-sim'
             - name: target_topic
               value: 'tx'
-              
             - name: client_id
               value: 'data_svc'
             - name: group_id
