@@ -11,18 +11,19 @@ create_namespaces:
 
 # step2
 .PHONY: prepare_infra
-prepare_infra: config_infra apply_config config_kafka config_monitoring prepare_images
-	oc apply -f deploy/open-data-hub.yaml -n ${DEV_NAMESPACE}
+prepare_infra: config_infra apply_config config_kafka prepare_images
+#config_monitoring
+#oc apply -f deploy/open-data-hub.yaml -n ${DEV_NAMESPACE}
 
 # step3
 .PHONY: prepare_build
 prepare_build:
 	oc apply -f builder/services/case_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/services/fraud_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/services/archive_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/services/archive.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/applications/rules_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/applications/fraud_app.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/demo/bridge_svc.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/demo/bridge.yaml -n ${BUILD_NAMESPACE}
 
 # step4
 .PHONY: deploy_services
@@ -35,7 +36,11 @@ deploy_services:
 	oc apply -f deploy/services/case_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/fraud_svc.yaml -n ${PROD_NAMESPACE}
 
-
+.PHONY: deploy_demo_services
+deploy_demo_services:
+	oc apply -f deploy/demo/bridge_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/demo/bridge_fraud_svc.yaml -n ${PROD_NAMESPACE}
+	
 # basics to prepare the environment and the build tasks
 
 .PHONY: config_infra
@@ -59,6 +64,7 @@ apply_config:
 	oc apply -f deploy/config_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
 	oc apply -f secrets/build_secrets.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f secrets/deploy_secrets.yaml -n ${PROD_NAMESPACE}
+	oc apply -f secrets/aws_secrets.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: config_kafka
 config_kafka:
@@ -104,11 +110,6 @@ build_all:
 	oc start-build bridge-svc -n ${BUILD_NAMESPACE}
 	oc start-build rules-app -n ${BUILD_NAMESPACE}
 	oc start-build fraud-app -n ${BUILD_NAMESPACE}
-
-.PHONY: deploy_demo_services
-deploy_demo_services:
-	oc apply -f deploy/demo/bridge_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/demo/bridge_fraud_svc.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: rollout_all
 rollout_all: rollout_apps rollout_svc rollout_demo_svc

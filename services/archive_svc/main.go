@@ -9,6 +9,9 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -24,7 +27,13 @@ const (
 	layoutISO = "2006-01-02"
 )
 
-func main() {
+var (
+	kc             *kafka.Consumer
+	opsTxProcessed prometheus.Counter
+	uploader       *s3manager.Uploader
+)
+
+func init() {
 
 	// kafka setup
 	kafkaService := env.GetString("kafka_service", "")
@@ -37,32 +46,8 @@ func main() {
 	clientID := env.GetString("client_id", "archive-svc")
 	groupID := env.GetString("group_id", "fsi-fraud-detection")
 
-	sourceTopic := env.GetString("source_topic", "tx-archive")
-	archiveLocation := env.GetString("target_location", "/opt/app-root/data")
-	archiveLocationPrefix := env.GetString("target_prefix", "audit")
-
-	// prometheus setup
-	promHost := env.GetString("prom_host", "0.0.0.0:2112")
-	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
-
-	// batch size
-	batchSize := int(env.GetInt("batch_size", 1000))
-
-	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
-		Name: "fraud_processed_transactions",
-		Help: "The number of processed transactions",
-	})
-
-	// start the metrics listener
-	go func() {
-		fmt.Printf(" --> starting metrics endpoint '%s' on '%s'\n", promMetricsPath, promHost)
-
-		http.Handle(promMetricsPath, promhttp.Handler())
-		http.ListenAndServe(promHost, nil)
-	}()
-
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
-	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
+	k, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":       kafkaServer,
 		"client.id":               clientID,
 		"group.id":                groupID,
@@ -73,12 +58,53 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	kc = k
 
-	err = kc.SubscribeTopics([]string{sourceTopic}, nil)
+	// AWS S3 setup
+	region := env.GetString("aws_region", "eu-central-1")
+	sess, err := session.NewSession(&aws.Config{
+		Region: aws.String(region)},
+	)
+	if err != nil {
+		panic(err)
+	}
+	uploader = s3manager.NewUploader(sess)
+
+	// prometheus collectors
+	opsTxProcessed = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "fraud_processed_transactions",
+		Help: "The number of processed transactions",
+	})
+
+	// prometheus endpoint setup
+	promHost := env.GetString("prom_host", "0.0.0.0:2112")
+	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
+
+	// start the metrics listener
+	go func() {
+		fmt.Printf(" --> starting metrics endpoint '%s' on '%s'\n", promMetricsPath, promHost)
+
+		http.Handle(promMetricsPath, promhttp.Handler())
+		http.ListenAndServe(promHost, nil)
+	}()
+}
+
+func main() {
+	// local path in PVC
+	archiveLocation := env.GetString("target_location", "/opt/app-root/data")
+	archiveLocationPrefix := env.GetString("target_prefix", "audit")
+
+	// batch size
+	batchSize := int(env.GetInt("batch_size", 1000))
+
+	// start listening on the kafka topic
+	sourceTopic := env.GetString("source_topic", "tx-archive")
+	err := kc.SubscribeTopics([]string{sourceTopic}, nil)
 	if err != nil {
 		panic(err)
 	}
 
+	clientID := env.GetString("client_id", "archive-svc")
 	fmt.Printf(" --> %s: listening on topic '%s'\n", clientID, sourceTopic)
 
 	// setup the next .csv file
@@ -102,10 +128,14 @@ func main() {
 
 			// start a new file every ... tx
 			if num%batchSize == 0 {
-				// close-of the current file
+				// close the current file
 				writer.Flush()
 				out.Close()
-				// start the new batcg
+
+				// upload the file to S3
+				go upload(location)
+
+				// start the new batch
 				num = 0
 				out, location = newFile(archiveLocation, archiveLocationPrefix)
 				writer = csv.NewWriter(out)
@@ -143,4 +173,31 @@ func timestampFileName() string {
 	now := time.Now()
 
 	return fmt.Sprintf("%s-%d.csv", now.Format(layoutISO), ts)
+}
+
+func upload(path string) {
+	locationPrefix := env.GetString("target_prefix", "audit")
+	bucketName := env.GetString("aws_bucket", "fsi-fraud-detection")
+
+	filename := filepath.Base(path)
+	location := fmt.Sprintf("%s/%s", locationPrefix, filename)
+
+	file, err := os.Open(path)
+	if err != nil {
+		fmt.Printf(" --> unable to upload '%s':%v\n", path, err)
+		return
+	}
+	defer file.Close()
+
+	fmt.Printf(" --> uploading '%s' to '%s/%s'\n", path, bucketName, location)
+
+	_, err = uploader.Upload(&s3manager.UploadInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(location),
+		Body:   file,
+	})
+	if err != nil {
+		fmt.Printf(" --> failed to upload '%s':%v\n", path, err)
+		return
+	}
 }

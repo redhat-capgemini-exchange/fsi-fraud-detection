@@ -21,7 +21,7 @@ spec:
       containers:
         - name: bridge-svc
           image: >-
-            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/bridge-svc:latest
+            image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/bridge:latest
           imagePullPolicy: Always
           envFrom:
             - configMapRef:

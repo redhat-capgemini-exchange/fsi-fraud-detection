@@ -7,4 +7,6 @@ metadata:
 data:
   kafka_service: 'transactions-kafka-bootstrap.fsi-fraud-detection.svc.cluster.local'
   kafka_service_port: '9092'
+  aws_region: 'eu-central-1'
+  aws_bucket: 'fsi-fraud-detection'
   

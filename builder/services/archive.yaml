@@ -4,7 +4,7 @@ items:
   - kind: BuildConfig
     apiVersion: build.openshift.io/v1
     metadata:
-      name: archive-svc
+      name: archive
       labels:
         app: fsi-fraud-detection
         app-owner: fsi-fraud-detection
@@ -29,7 +29,7 @@ items:
       output:
         to:
           kind: ImageStreamTag
-          name: archive-svc:latest
+          name: archive:latest
       triggers:
         - type: GitHub
           github:
@@ -42,11 +42,11 @@ items:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
-      name: archive-svc
+      name: archive
       labels:
-        svc: archive-svc
+        svc: archive
         app: fsi-fraud-detection
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
       annotations:
-        description: archive-svc services image
+        description: archive services base image

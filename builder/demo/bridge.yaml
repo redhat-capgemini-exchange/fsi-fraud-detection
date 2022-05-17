@@ -4,7 +4,7 @@ items:
   - kind: BuildConfig
     apiVersion: build.openshift.io/v1
     metadata:
-      name: bridge-svc
+      name: bridge
       labels:
         app: fsi-fraud-detection
         app-owner: fsi-fraud-detection
@@ -28,7 +28,7 @@ items:
       output:
         to:
           kind: ImageStreamTag
-          name: bridge-svc:latest
+          name: bridge:latest
       triggers:
         - type: GitHub
           github:
@@ -41,10 +41,10 @@ items:
   - kind: ImageStream
     apiVersion: image.openshift.io/v1
     metadata:
-      name: bridge-svc
+      name: bridge
       labels:
         app: fsi-fraud-detection
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: python
       annotations:
-        description: bridge-svc services image
+        description: bridge services base image

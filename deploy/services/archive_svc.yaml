@@ -30,7 +30,7 @@ items:
           containers:
             - name: archive-svc
               image: >-
-                image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/archive-svc:latest
+                image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/archive:latest
               imagePullPolicy: Always
               envFrom:
                 - configMapRef:
@@ -46,10 +46,20 @@ items:
                   value: "/opt/app-root/data"
                 - name: target_prefix
                   value: archive
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      key: aws_access_key_id
+                      name: fsi-fraud-detection-aws-secrets
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      key: aws_secret_access_key
+                      name: fsi-fraud-detection-aws-secrets
 
               volumeMounts:
                 - name: datalake-archive
-                  mountPath: "/opt/app-root/src/data"
+                  mountPath: "/opt/app-root/data"
 
   - kind: Service
     apiVersion: v1

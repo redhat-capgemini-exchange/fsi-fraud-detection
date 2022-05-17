@@ -6,6 +6,7 @@ stuff.md
 *.parquet
 secrets/*.json
 *_secrets.yaml
+rootkey.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
