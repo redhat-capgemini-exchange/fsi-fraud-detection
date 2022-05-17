@@ -6,6 +6,7 @@ import pandas as pd
 
 from simulator.shared import read_from_pkl, read_from_csv
 
+
 def divts(ts):
     return int(ts / 1000000000)
 
@@ -20,7 +21,7 @@ def post_to_kafka_bridge(endpoint, batch):
 
     # post the payload with backoff/retry in case the bridge gets overloaded ...
     try:
-        success = False
+        success = False  # change to False
         retry = 0
 
         while not success:
@@ -39,16 +40,16 @@ def post_to_kafka_bridge(endpoint, batch):
         sys.exit()
 
 
-def upload_transactions(bridge, topic='tx-sim', start='2020-05-01', end='2020-05-01', loc='./data/simulated/pkl/', batch_size=100):
+def upload_transactions(bridge, topic='tx-sim', start='2020-05-01', end='2020-05-01', loc='./data/simulated/csv/', batch_size=100):
 
     KAFKA_ENDPOINT = f"{bridge}/topics/{topic}"
 
     # read the raw transaction data
-    transactions_df = read_from_pkl(loc, start, end)
+    transactions_df = read_from_csv(loc, start, end)
 
     # convert to UNIX time to avoid issues later on
-    transactions_df['TX_DATETIME'] = pd.to_numeric(transactions_df['TX_DATETIME']).apply(divts)
-    
+    #transactions_df['TX_DATETIME'] = pd.to_numeric(transactions_df['TX_DATETIME']).apply(divts)
+
     NUM_TX = len(transactions_df)
 
     batch = []
