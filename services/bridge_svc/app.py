@@ -40,6 +40,9 @@ for msg in consumer:
     # no idea, why we need the double loads ...
     tx = loads(msg.value)
 
+    # convert datetime to UNIX timestamp
+    tx['TX_DATETIME'] = int(datetime.datetime.strptime(tx['TX_DATETIME'], "%Y-%m-%d %H:%M:%S").timestamp())
+
     # just send it to the next topic
     producer.send(TARGET_TOPIC, value=tx)
 

@@ -12,6 +12,7 @@ kafka-python==2.0.2
 cloudpickle==2.0.0 
 requests==2.27.1
 python-dotenv==0.20.0
+papermill==2.3.4
 # graphics
 altair==4.2.0 
 vega==3.6.0
