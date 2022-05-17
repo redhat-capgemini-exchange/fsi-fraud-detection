@@ -125,16 +125,18 @@ func main() {
 			// decide on the target topic based on TX_FRAUD
 			if resp.TX_FRAUD_PREDICTION > 0 {
 				nextTopic = fraudTopic
-				tx.TX_FRAUD = resp.TX_FRAUD_PREDICTION
-				tx.TX_FRAUD_PREDICTION = resp.TX_FRAUD_PREDICTION
+				tx.TX_FRAUD = 0 // this is still 0 and might get overwritten by the case_svc
 				tx.TX_FRAUD_SCENARIO = resp.TX_FRAUD_SCENARIO
+				tx.TX_FRAUD_PREDICTION = resp.TX_FRAUD_PREDICTION
+				tx.TX_FRAUD_PROBABILITY = resp.TX_FRAUD_PROBABILITY
+
 			} else {
 				// TX seems to be OK, clear the fraud flags
 				tx.TX_FRAUD = 0
 				tx.TX_FRAUD_SCENARIO = 0
+				tx.TX_FRAUD_PREDICTION = 0
+				tx.TX_FRAUD_PROBABILITY = 0.0
 			}
-			tx.TX_FRAUD_PREDICTION = resp.TX_FRAUD_PREDICTION
-			tx.TX_FRAUD_PROBABILITY = resp.TX_FRAUD_PROBABILITY
 
 			if tx.TX_FRAUD > 0 {
 				fmt.Printf(" ---> fraudulent TX %d: %v\n", tx.TRANSACTION_ID, tx)
