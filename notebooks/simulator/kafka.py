@@ -47,6 +47,9 @@ def upload_transactions(bridge, topic='tx-sim', start='2020-05-01', end='2020-05
     # read the raw transaction data
     transactions_df = read_from_csv(loc, start, end)
 
+    # drop "unwanted" columns
+    transactions_df = transactions_df.drop(['TX_TIME_SECONDS', 'TX_TIME_DAYS', 'TX_FRAUD', 'TX_FRAUD_SCENARIO'], axis=1)
+
     # convert to UNIX time to avoid issues later on
     #transactions_df['TX_DATETIME'] = pd.to_numeric(transactions_df['TX_DATETIME']).apply(divts)
 

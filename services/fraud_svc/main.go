@@ -106,7 +106,7 @@ func main() {
 			var tx internal.Transaction
 			err = json.Unmarshal(msg.Value, &tx)
 
-			fmt.Printf(" ---> TX %d: %v\n", tx.TRANSACTION_ID, tx)
+			//fmt.Printf(" ---> TX %d: %v\n", tx.TRANSACTION_ID, tx)
 
 			// check 1: rules engine
 			if err := internal.PostJSON(rulesAppEndpoint, &tx, &resp); err != nil {
