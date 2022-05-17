@@ -41,7 +41,8 @@ for msg in consumer:
     tx = loads(msg.value)
 
     # convert datetime to UNIX timestamp
-    tx['TX_DATETIME'] = int(datetime.datetime.strptime(tx['TX_DATETIME'], "%Y-%m-%d %H:%M:%S").timestamp())
+    if type(tx['TX_DATETIME']) == str:
+        tx['TX_DATETIME'] = int(datetime.datetime.strptime(tx['TX_DATETIME'], "%Y-%m-%d %H:%M:%S").timestamp())
 
     # just send it to the next topic
     producer.send(TARGET_TOPIC, value=tx)
