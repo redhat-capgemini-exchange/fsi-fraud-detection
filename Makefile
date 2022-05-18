@@ -23,7 +23,6 @@ prepare_build:
 	oc apply -f builder/services/fraud_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/applications/rules_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/applications/fraud_app.yaml -n ${BUILD_NAMESPACE}
-	
 
 # step4
 .PHONY: deploy_services

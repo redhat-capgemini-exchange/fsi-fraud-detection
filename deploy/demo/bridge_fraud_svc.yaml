@@ -34,6 +34,6 @@ spec:
             - name: target_topic
               value: 'tx-audit-fraud'
             - name: client_id
-              value: 'data_svc'
+              value: 'bridge_fraud'
             - name: group_id
-              value: 'data_svc'
+              value: 'demo_svc'

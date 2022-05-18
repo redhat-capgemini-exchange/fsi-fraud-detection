@@ -134,7 +134,7 @@ func main() {
 				tx.TX_FRAUD_PROBABILITY = 0.0
 			}
 
-			if tx.TX_FRAUD > 0 {
+			if tx.TX_FRAUD_PREDICTION > 0 {
 				fmt.Printf(" ---> fraudulent TX %d: %v\n", tx.TRANSACTION_ID, tx)
 			}
 
