@@ -4,21 +4,21 @@ items:
   - kind: DeploymentConfig
     apiVersion: apps.openshift.io/v1
     metadata:
-      name: audit-svc
+      name: archive-inbox-svc
       labels:
-        svc: audit-svc
+        svc: archive-inbox-svc
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
         group: integration-svc
         collect_metrics: "true"
     spec:
       selector:
-        svc: audit-svc
+        svc: archive-inbox-svc
       replicas: 1
       template:
         metadata:
           labels:
-            svc: audit-svc
+            svc: archive-inbox-svc
             app-owner: fsi-fraud-detection
             group: integration-svc
             collect_metrics: "true"
@@ -28,7 +28,7 @@ items:
               persistentVolumeClaim:
                 claimName: datalake
           containers:
-            - name: audit-svc
+            - name: archive-inbox-svc
               image: >-
                 image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/archive:latest
               imagePullPolicy: Always
@@ -45,7 +45,7 @@ items:
                 - name: target_location
                   value: "/opt/app-root/data"
                 - name: target_prefix
-                  value: audit
+                  value: inbox
                 - name: AWS_ACCESS_KEY_ID
                   valueFrom:
                     secretKeyRef:
@@ -64,7 +64,7 @@ items:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: metrics-audit-svc
+      name: metrics-archive-inbox-svc
       labels:
         app-owner: fsi-fraud-detection
     spec:
@@ -74,5 +74,5 @@ items:
           targetPort: 2112
           name: metrics
       selector:
-        svc: audit-svc
+        svc: archive-inbox-svc
       type: ClusterIP

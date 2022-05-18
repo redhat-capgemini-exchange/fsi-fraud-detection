@@ -4,21 +4,21 @@ items:
   - kind: DeploymentConfig
     apiVersion: apps.openshift.io/v1
     metadata:
-      name: audit-fraud-svc
+      name: archive-fraud-svc
       labels:
-        svc: audit-fraud-svc
+        svc: archive-fraud-svc
         app-owner: fsi-fraud-detection
         app.openshift.io/runtime: golang
         group: integration-svc
         collect_metrics: "true"
     spec:
       selector:
-        svc: audit-fraud-svc
+        svc: archive-fraud-svc
       replicas: 1
       template:
         metadata:
           labels:
-            svc: audit-fraud-svc
+            svc: archive-fraud-svc
             app-owner: fsi-fraud-detection
             group: integration-svc
             collect_metrics: "true"
@@ -28,7 +28,7 @@ items:
               persistentVolumeClaim:
                 claimName: datalake
           containers:
-            - name: audit-fraud-svc
+            - name: archive-fraud-svc
               image: >-
                 image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/archive:latest
               imagePullPolicy: Always
@@ -66,7 +66,7 @@ items:
   - kind: Service
     apiVersion: v1
     metadata:
-      name: metrics-audit-fraud-svc
+      name: metrics-archive-fraud-svc
       labels:
         app-owner: fsi-fraud-detection
     spec:
@@ -76,5 +76,5 @@ items:
           targetPort: 2112
           name: metrics
       selector:
-        svc: audit-fraud-svc
+        svc: archive-fraud-svc
       type: ClusterIP

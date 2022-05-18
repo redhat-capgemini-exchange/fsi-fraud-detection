@@ -23,6 +23,10 @@ items:
             group: integration-svc
             collect_metrics: "true"
         spec:
+          volumes:
+            - name: datalake-archive
+              persistentVolumeClaim:
+                claimName: datalake
           containers:
             - name: case-svc
               image: >-
@@ -34,12 +38,18 @@ items:
               env:
                 - name: source_topic
                   value: "tx-fraud"
+                - name: fraud_topic
+                  value: "tx-audit-fraud"
                 - name: target_topic
                   value: "tx-archive"
                 - name: client_id
                   value: "case_svc"
                 - name: group_id
                   value: "case_svc"
+
+              volumeMounts:
+                - name: datalake-archive
+                  mountPath: "/opt/app-root/data"
 
   - kind: Service
     apiVersion: v1

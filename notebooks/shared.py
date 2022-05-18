@@ -49,7 +49,7 @@ def merge_csv_files(file_collection):
 
 def load_transactions(file_collection, cutoff_date=None, time_window=-1):
     tx_df = merge_csv_files(file_collection)
-    
+
     tx_df = tx_df.sort_values('TRANSACTION_ID')
     tx_df.reset_index(drop=True, inplace=True)
 
@@ -64,13 +64,31 @@ def load_transactions(file_collection, cutoff_date=None, time_window=-1):
 
     if cutoff_date == None and time_window > -1:
         # return the n last days
-        d = tx_df['TX_DATETIME'].max() - datetime.timedelta(days=time_window + 1)
+        d = tx_df['TX_DATETIME'].max(
+        ) - datetime.timedelta(days=time_window + 1)
         return tx_df.loc[tx_df['TX_DATETIME'] > d.strftime("%Y-%m-%d")]
 
     # if cutoff_date != None and time_window > -1:
     # this is not supported yet!
 
     return td_df
+
+
+def save_transactions_day(tx_df, start_date, output_dir='./data/'):
+    start = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+
+    # make sure the dir exist
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # save the merged data
+    for day in range(tx_df.TX_TIME_DAYS.max()+1):
+        date = start + datetime.timedelta(days=day)
+        filename_output = date.strftime("%Y-%m-%d")
+
+        tx_day = tx_df[tx_df.TX_TIME_DAYS ==
+                       day].sort_values('TX_TIME_SECONDS')
+        tx_day.to_csv(output_dir + filename_output + '.csv', index=False)
 
 
 def download_bucket_folder(key, bucket_name='fsi-fraud-detection', local_prefix='./data/'):

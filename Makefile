@@ -17,12 +17,13 @@ prepare_infra: config_infra apply_config config_kafka prepare_images config_moni
 # step3
 .PHONY: prepare_build
 prepare_build:
+	oc apply -f builder/services/archive.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/demo/bridge.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/services/case_svc.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/services/fraud_svc.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/services/archive.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/applications/rules_app.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f builder/applications/fraud_app.yaml -n ${BUILD_NAMESPACE}
-	oc apply -f builder/demo/bridge.yaml -n ${BUILD_NAMESPACE}
+	
 
 # step4
 .PHONY: deploy_services
@@ -30,8 +31,8 @@ deploy_services:
 	oc apply -f deploy/applications/rules_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/applications/fraud_app.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/archive_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/audit_fraud_svc.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/services/audit_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/archive_fraud_svc.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/services/archive_inbox_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/case_svc.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/services/fraud_svc.yaml -n ${PROD_NAMESPACE}
 
@@ -118,7 +119,8 @@ rollout_svc:
 	oc rollout latest dc/router-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/case-svc -n ${PROD_NAMESPACE}
 	oc rollout latest dc/audit-svc -n ${PROD_NAMESPACE}
-	oc rollout latest dc/archive-svc -n ${PROD_NAMESPACE}
+	oc rollout latest dc/audit-inbox-svc -n ${PROD_NAMESPACE}
+	oc rollout latest dc/audit-fraud-svc -n ${PROD_NAMESPACE}
 
 .PHONY: rollout_apps
 rollout_apps:
