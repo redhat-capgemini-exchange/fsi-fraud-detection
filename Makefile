@@ -55,7 +55,7 @@ config_infra:
 		system:image-puller system:serviceaccount:${DEV_NAMESPACE}:default \
     	--namespace=${BUILD_NAMESPACE}
 	oc apply -f deploy/pvc_data.yaml -n ${PROD_NAMESPACE}
-	oc apply -f deploy/pvc_models.yaml -n ${PROD_NAMESPACE}
+	oc apply -f deploy/pvc_models.yaml -n ${BUILD_NAMESPACE}
 
 .PHONY: apply_config
 apply_config:
@@ -98,7 +98,7 @@ cleanup:
 .PHONY: undeploy_all
 undeploy_all: cleanup
 	oc delete routes,dc,pvc,services,configmaps,secrets -l app-owner=fsi-fraud-detection -n ${PROD_NAMESPACE}
-	oc delete bc,is,configmaps,secrets -l app-owner=fsi-fraud-detection -n ${BUILD_NAMESPACE}
+	oc delete bc,is,configmaps,secrets,pvc -l app-owner=fsi-fraud-detection -n ${BUILD_NAMESPACE}
 	oc delete is --all -n ${BUILD_NAMESPACE}
 
 # devops tasks

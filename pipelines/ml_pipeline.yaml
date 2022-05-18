@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: Pipeline
+    apiVersion: tekton.dev/v1beta1
+    metadata:
+      name: ml-pipeline
+    spec:
+      params:
+        - default: model
+          name: MODEL
+          type: string
+        - default: 'https://github.com/redhat-capgemini-exchange/fsi-fraud-detection'
+          name: GIT_REPO
+          type: string
+        - default: develop
+          name: GIT_REVISION
+          type: string
+        #- default: 'image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/mlmodel'
+        #  name: IMAGE_NAME
+        #  type: string
+        - default: .
+          name: PATH_CONTEXT
+          type: string
+        #- default: 3.9-ubi8
+        #  name: VERSION
+        #  type: string
+      tasks:
+        - name: fetch-notebooks
+          params:
+            - name: url
+              value: $(params.GIT_REPO)
+            - name: revision
+              value: $(params.GIT_REVISION)
+            - name: subdirectory
+              value: ''
+            - name: deleteExisting
+              value: 'true'
+          taskRef:
+            kind: ClusterTask
+            name: git-clone
+          workspaces:
+            - name: output
+              workspace: workspace
+        - name: merge
+          runAfter:
+            - fetch-notebooks
+          taskRef:
+            kind: ClusterTask
+            name: run-notebook
+          workspaces:
+            - name: source
+              workspace: workspace
+      workspaces:
+        - name: workspace

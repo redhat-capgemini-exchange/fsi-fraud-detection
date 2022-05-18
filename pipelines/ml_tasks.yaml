@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: List
+items:  
+  - kind: ClusterTask
+    apiVersion: tekton.dev/v1beta1
+    metadata:
+      name: run-notebook
+    spec:
+      params:
+        - name: PATH_CONTEXT
+          description: The location of the path to run s2i from.
+          default: .
+          type: string
+        - name: NOTEBOOK
+          type: string
+        - name: PAPERMILL_VERSION
+          description: The version of Papermill to install.
+          default: 2.3.4 
+      steps:
+        - env:
+          - name: PARAM_PATH_CONTEXT
+            value: $(params.PATH_CONTEXT)
+          - name: PARAM_NOTEBOOK
+            value: $(params.NOTEBOOK)
+          - name: PARAM_PAPERMILL_VERSION
+            value: $(params.PAPERMILL_VERSION)
+          image: ubi8/python-39
+          name: 'dbg'
+          resources:
+            requests:
+              memory: 2Gi
+              cpu: 1000m
+            limits:
+              memory: 4Gi
+              cpu: 2000m
+          volumeMounts:
+            - mountPath: /gen-source
+              name: gen-source
+          workingDir: $(workspaces.source.path)
+          script: >
+            #!/usr/bin/env sh
+
+            set -eu
+
+            cd ${PARAM_PATH_CONTEXT}
+
+            pip install -r requirements.txt
+
+            pip install papermill==${PARAM_PAPERMILL_VERSION}
+
+            papermill ${PARAM_NOTEBOOK} out.ipynb
+
+      volumes:
+        - emptyDir: {}
+          name: gen-source
+      workspaces:
+        - mountPath: /workspace/source
+          name: source
+
+  - kind: ClusterTask
+    apiVersion: tekton.dev/v1beta1
+    metadata:
+      name: inspect
+    spec:
+      steps:
+        - image: ubi8/ubi-minimal
+          name: 'dbg'
+          resources: {}
+          volumeMounts:
+            - mountPath: /gen-source
+              name: gen-source
+          workingDir: $(workspaces.source.path)
+          script: >
+            #!/usr/bin/env sh
+
+            set -eu
+
+            ls -la /workspace/source
+
+      volumes:
+        - emptyDir: {}
+          name: gen-source
+      workspaces:
+        - mountPath: /workspace/source
+          name: source
