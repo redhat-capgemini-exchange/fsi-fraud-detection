@@ -3,21 +3,27 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/txsvc/stdlib/v2/env"
 
 	"github.com/redhat-capgemini-exchange/fsi-fraud-detection/internal"
 )
 
-func main() {
+var (
+	kc *kafka.Consumer
+	kp *kafka.Producer
+)
 
+func init() {
+
+	clientID := env.GetString("client_id", "case-svc")
+	groupID := env.GetString("group_id", "fsi-fraud-detection")
+
+	// kafka setup
 	kafkaService := env.GetString("kafka_service", "")
 	if kafkaService == "" {
 		panic(fmt.Errorf("missing env 'kafka_service'"))
@@ -25,31 +31,8 @@ func main() {
 	kafkaServicePort := env.GetString("kafka_service_port", "9092")
 	kafkaServer := fmt.Sprintf("%s:%s", kafkaService, kafkaServicePort)
 
-	clientID := env.GetString("client_id", "case-svc")
-	groupID := env.GetString("group_id", "fsi-fraud-detection")
-
-	sourceTopic := env.GetString("source_topic", "tx-fraud")
-	targetTopic := env.GetString("target_topic", "tx-archive")
-
-	// prometheus setup
-	promHost := env.GetString("prom_host", "0.0.0.0:2112")
-	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
-
-	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
-		Name: "fraud_processed_transactions",
-		Help: "The number of processed transactions",
-	})
-
-	// start the metrics listener
-	go func() {
-		fmt.Printf(" --> starting metrics endpoint '%s' on '%s'\n", promMetricsPath, promHost)
-
-		http.Handle(promMetricsPath, promhttp.Handler())
-		http.ListenAndServe(promHost, nil)
-	}()
-
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
-	kc, err := kafka.NewConsumer(&kafka.ConfigMap{
+	_kc, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers":       kafkaServer,
 		"client.id":               clientID,
 		"group.id":                groupID,
@@ -60,15 +43,34 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	kc = _kc
 
-	kp, err := kafka.NewProducer(&kafka.ConfigMap{
+	_kp, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": kafkaServer,
 	})
 	if err != nil {
 		panic(err)
 	}
+	kp = _kp
 
-	err = kc.SubscribeTopics([]string{sourceTopic}, nil)
+	// prometheus endpoint setup
+	internal.StartPrometheusListener()
+}
+
+func main() {
+
+	clientID := env.GetString("client_id", "case-svc")
+	sourceTopic := env.GetString("source_topic", "tx-fraud")
+	targetTopic := env.GetString("target_topic", "tx-archive")
+
+	// metrics collectors
+	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
+		Name: "fraud_processed_transactions",
+		Help: "The number of processed transactions",
+	})
+
+	// subscriber
+	err := kc.SubscribeTopics([]string{sourceTopic}, nil)
 	if err != nil {
 		panic(err)
 	}

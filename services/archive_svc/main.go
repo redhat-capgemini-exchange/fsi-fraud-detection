@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"path/filepath"
 	"time"
@@ -12,11 +11,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/txsvc/stdlib/v2/env"
 
@@ -28,12 +27,13 @@ const (
 )
 
 var (
-	kc             *kafka.Consumer
-	opsTxProcessed prometheus.Counter
-	uploader       *s3manager.Uploader
+	kc       *kafka.Consumer
+	uploader *s3manager.Uploader
 )
 
 func init() {
+	clientID := env.GetString("client_id", "archive-svc")
+	groupID := env.GetString("group_id", "fsi-fraud-detection")
 
 	// kafka setup
 	kafkaService := env.GetString("kafka_service", "")
@@ -42,9 +42,6 @@ func init() {
 	}
 	kafkaServicePort := env.GetString("kafka_service_port", "9092")
 	kafkaServer := fmt.Sprintf("%s:%s", kafkaService, kafkaServicePort)
-
-	clientID := env.GetString("client_id", "archive-svc")
-	groupID := env.GetString("group_id", "fsi-fraud-detection")
 
 	// https://github.com/edenhill/librdkafka/blob/master/CONFIGURATION.md
 	k, err := kafka.NewConsumer(&kafka.ConfigMap{
@@ -70,32 +67,22 @@ func init() {
 	}
 	uploader = s3manager.NewUploader(sess)
 
-	// metrics collectors
-	opsTxProcessed = promauto.NewCounter(prometheus.CounterOpts{
-		Name: "fraud_processed_transactions",
-		Help: "The number of processed transactions",
-	})
-
 	// prometheus endpoint setup
-	promHost := env.GetString("prom_host", "0.0.0.0:2112")
-	promMetricsPath := env.GetString("prom_metrics_path", "/metrics")
-
-	// start the metrics listener
-	go func() {
-		fmt.Printf(" --> starting metrics endpoint '%s' on '%s'\n", promMetricsPath, promHost)
-
-		http.Handle(promMetricsPath, promhttp.Handler())
-		http.ListenAndServe(promHost, nil)
-	}()
+	internal.StartPrometheusListener()
 }
 
 func main() {
-	// local path in PVC
+
+	clientID := env.GetString("client_id", "archive-svc")
 	archiveLocation := env.GetString("target_location", "/opt/app-root/data")
 	archiveLocationPrefix := env.GetString("target_prefix", "audit")
-
-	// batch size
 	batchSize := int(env.GetInt("batch_size", 1000))
+
+	// metrics collectors
+	opsTxProcessed := promauto.NewCounter(prometheus.CounterOpts{
+		Name: "fraud_processed_transactions",
+		Help: "The number of processed transactions",
+	})
 
 	// start listening on the kafka topic
 	sourceTopic := env.GetString("source_topic", "tx-archive")
@@ -104,22 +91,23 @@ func main() {
 		panic(err)
 	}
 
-	clientID := env.GetString("client_id", "archive-svc")
 	fmt.Printf(" --> %s: listening on topic '%s'\n", clientID, sourceTopic)
 
-	// setup the next .csv file
+	// setup the first .csv file
 	out, location := newFile(archiveLocation, archiveLocationPrefix)
 	writer := csv.NewWriter(out)
 	writer.Write(internal.ArchiveHeader)
-	num := 0
 
 	fmt.Printf(" --> archiving to %s\n", location)
 
+	num := 0
 	for {
 		msg, err := kc.ReadMessage(-1)
 		if err == nil {
 			var tx internal.Transaction
 			err = json.Unmarshal(msg.Value, &tx)
+
+			// append to the current file
 			writer.Write(tx.ToArray())
 
 			// metrics
@@ -151,30 +139,6 @@ func main() {
 
 }
 
-func newFile(path, prefix string) (*os.File, string) {
-	location := filepath.Join(path, prefix)
-	if _, err := os.Stat(location); os.IsNotExist(err) {
-		err := os.Mkdir(location, os.ModePerm)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	fullPath := filepath.Join(location, timestampFileName())
-	out, err := os.Create(fullPath)
-	if err != nil {
-		panic(err)
-	}
-	return out, fullPath
-}
-
-func timestampFileName() string {
-	ts := time.Now().UnixNano()
-	now := time.Now()
-
-	return fmt.Sprintf("%s-%d.csv", now.Format(layoutISO), ts)
-}
-
 func upload(path string) {
 	locationPrefix := env.GetString("target_prefix", "audit")
 	bucketName := env.GetString("aws_bucket", "fsi-fraud-detection")
@@ -200,4 +164,28 @@ func upload(path string) {
 		fmt.Printf(" --> failed to upload '%s':%v\n", path, err)
 		return
 	}
+}
+
+func newFile(path, prefix string) (*os.File, string) {
+	location := filepath.Join(path, prefix)
+	if _, err := os.Stat(location); os.IsNotExist(err) {
+		err := os.Mkdir(location, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	fullPath := filepath.Join(location, timestampFileName())
+	out, err := os.Create(fullPath)
+	if err != nil {
+		panic(err)
+	}
+	return out, fullPath
+}
+
+func timestampFileName() string {
+	ts := time.Now().UnixNano()
+	now := time.Now()
+
+	return fmt.Sprintf("%s-%d.csv", now.Format(layoutISO), ts)
 }
