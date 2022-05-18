@@ -74,6 +74,7 @@ func init() {
 func main() {
 
 	clientID := env.GetString("client_id", "archive-svc")
+	sourceTopic := env.GetString("source_topic", "tx-archive")
 	archiveLocation := env.GetString("target_location", "/opt/app-root/data")
 	archiveLocationPrefix := env.GetString("target_prefix", "audit")
 	batchSize := int(env.GetInt("batch_size", 1000))
@@ -85,7 +86,6 @@ func main() {
 	})
 
 	// start listening on the kafka topic
-	sourceTopic := env.GetString("source_topic", "tx-archive")
 	err := kc.SubscribeTopics([]string{sourceTopic}, nil)
 	if err != nil {
 		panic(err)

@@ -69,12 +69,6 @@ func main() {
 		Help: "The number of processed transactions",
 	})
 
-	// subscriber
-	err := kc.SubscribeTopics([]string{sourceTopic}, nil)
-	if err != nil {
-		panic(err)
-	}
-
 	// create a responder for delivery notifications
 	evts := make(chan kafka.Event, 1000) // FIXME not sure if such a number is needed ...
 	go func() {
@@ -90,6 +84,12 @@ func main() {
 			}
 		}
 	}()
+
+	// subscriber
+	err := kc.SubscribeTopics([]string{sourceTopic}, nil)
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Printf(" --> %s: listening on topic '%s'\n", clientID, sourceTopic)
 

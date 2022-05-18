@@ -53,6 +53,8 @@ func init() {
 	}
 	kp = _kp
 
+	// prometheus endpoint setup
+	internal.StartPrometheusListener()
 }
 
 func main() {
@@ -70,9 +72,6 @@ func main() {
 		Help: "The number of processed transactions",
 	})
 
-	// prometheus endpoint setup
-	internal.StartPrometheusListener()
-
 	// create a responder for delivery notifications
 	evts := make(chan kafka.Event, 1000) // FIXME not sure if such a number is needed ...
 	go func() {
@@ -88,6 +87,12 @@ func main() {
 			}
 		}
 	}()
+
+	// subscriber
+	err := kc.SubscribeTopics([]string{sourceTopic}, nil)
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Printf(" --> %s: listening on topic '%s'\n", clientID, sourceTopic)
 
