@@ -119,19 +119,26 @@ items:
         - name: PATH_CONTEXT
           description: The location of the path to run the notebook from.
           default: .
-        #- name: EXTRA_PARAMS
-        #  type: string
-        #  description: Additional params for the cp command.
-        #  default:
+        - name: EXTRA_PARAMS
+          type: string
+          description: Additional params for the cp command ('.' equals no parameters).
+          default: .
       steps:
         - script: >
             #!/usr/bin/env sh
 
             set -eu
 
+            if [[ "$PARAM_EXTRA_PARAMS" = '.' ]] ; then
+              export PARAM_EXTRA_PARAMS=
+            fi
+
             cd $(params.PATH_CONTEXT)
 
-            cp $(params.SRC_PATH) $(params.DEST_PATH)
+            cp $PARAM_EXTRA_PARAMS $(params.SRC_PATH) $(params.DEST_PATH)
+          env:
+          - name: PARAM_EXTRA_PARAMS
+            value: $(params.EXTRA_PARAMS)
           image: ubi8/ubi-minimal
           name: ''
           resources: {}
