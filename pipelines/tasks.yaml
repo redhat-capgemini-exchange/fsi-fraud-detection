@@ -14,6 +14,8 @@ items:
           description: The location of the path to run s2i from.
           default: .
           type: string
+        - name: EXTRA_ENV
+          type: string
         - name: PAPERMILL_VERSION
           description: The version of Papermill to install.
           default: 2.3.4
@@ -23,18 +25,30 @@ items:
 
             set -eu
 
+            if [[ ! -z "$PARAM_EXTRA_ENV" ]] ; then
+              echo "exporting EXTRA_ENV"
+
+              IFS=', ' read -r -a array <<< "$PARAM_EXTRA_ENV"
+
+              for element in "${array[@]}"
+              do
+                  echo "$element"
+                  export "$element"
+              done
+            fi
+
             cd $(params.PATH_CONTEXT)
 
             pip install -r requirements.txt
 
             pip install papermill==$(params.PAPERMILL_VERSION)
 
-            papermill --log-output ${PARAM_NOTEBOOKS} output.ipynb
+            papermill --log-output $(params.NOTEBOOKS) output.ipynb
           env:
-          - name: PARAM_PATH_CONTEXT
-            value: $(params.PATH_CONTEXT)
-          - name: PARAM_NOTEBOOKS
-            value: $(params.NOTEBOOKS)
+          - name: PARAM_EXTRA_ENV
+            value: $(params.EXTRA_ENV)
+          #- name: PARAM_NOTEBOOKS
+          #  value: $(params.NOTEBOOKS)
           #- name: PARAM_PAPERMILL_VERSION
           #  value: $(params.PAPERMILL_VERSION)
           image: ubi8/python-39
@@ -44,7 +58,7 @@ items:
               memory: 2Gi
               cpu: 1
             limits:
-              memory: 8Gi
+              memory: 4Gi
               cpu: 2
           volumeMounts:
             - mountPath: /gen-source

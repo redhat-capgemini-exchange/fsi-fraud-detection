@@ -63,6 +63,7 @@ apply_config:
 	oc apply -f deploy/config_fsi_fraud_detection.yaml -n ${PROD_NAMESPACE}
 	oc apply -f secrets/build_secrets.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f secrets/deploy_secrets.yaml -n ${PROD_NAMESPACE}
+	oc apply -f secrets/aws_secrets.yaml -n ${BUILD_NAMESPACE}
 	oc apply -f secrets/aws_secrets.yaml -n ${PROD_NAMESPACE}
 
 .PHONY: config_kafka
@@ -91,7 +92,7 @@ prepare_images:
 .PHONY: cleanup
 cleanup:
 	oc delete build --all -n ${BUILD_NAMESPACE}
-	oc delete pipelineruns --all -n ${BUILD_NAMESPACE}
+	oc delete pipelineruns,taskruns --all -n ${BUILD_NAMESPACE}
 	oc delete pod --field-selector=status.phase==Succeeded -n ${BUILD_NAMESPACE}
 	oc delete pod --field-selector=status.phase==Succeeded -n ${PROD_NAMESPACE}
 

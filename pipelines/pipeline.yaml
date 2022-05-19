@@ -7,21 +7,21 @@ items:
       name: ml-pipeline
     spec:
       params:
-        - default: model
-          name: MODEL
+        #- default: model
+        #  name: MODEL
+        #  type: string
+        - name: GIT_REPO
           type: string
-        - default: 'https://github.com/redhat-capgemini-exchange/fsi-fraud-detection'
-          name: GIT_REPO
+          default: 'https://github.com/redhat-capgemini-exchange/fsi-fraud-detection'
+        - name: GIT_REVISION
           type: string
-        - default: develop
-          name: GIT_REVISION
-          type: string
+          default: develop
         #- default: 'image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/mlmodel'
         #  name: IMAGE_NAME
         #  type: string
-        - default: .
-          name: PATH_CONTEXT
+        - name: PATH_CONTEXT
           type: string
+          default: notebooks
         #- default: 3.9-ubi8
         #  name: VERSION
         #  type: string
@@ -43,6 +43,11 @@ items:
             - name: output
               workspace: workspace
         - name: merge
+          params:
+            - name: NOTEBOOKS
+              value: '04_merge_data.ipynb'
+            - name: PATH_CONTEXT
+              value: $(params.PATH_CONTEXT)
           runAfter:
             - fetch-notebooks
           taskRef:
