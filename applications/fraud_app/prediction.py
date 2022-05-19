@@ -12,7 +12,7 @@ input_features = ['TX_AMOUNT', 'TX_DURING_WEEKEND', 'TX_DURING_NIGHT', 'CUSTOMER
                   'TERMINAL_ID_RISK_30DAY_WINDOW']
 
 # load the latest model
-model_location = os.getenv('model_location', './data/model/model_latest.pkl')
+model_location = os.getenv('model_location', 'model_latest.pkl')
 TX_FRAUD_THRESHOLD = float(os.getenv('tx_fraud_threshold', '0.8'))
 TX_FRAUD_SCENARIO = int(os.getenv('tx_fraud_scenario', '2'))
 

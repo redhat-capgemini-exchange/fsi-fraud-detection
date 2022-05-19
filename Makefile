@@ -45,15 +45,10 @@ deploy_demo_services:
 .PHONY: config_infra
 config_infra:
 	oc apply -f deploy/limit-ranges.yaml -n ${PROD_NAMESPACE}
-	oc policy add-role-to-user \
-		system:image-puller system:serviceaccount:${PROD_NAMESPACE}:default \
-    	--namespace=${BUILD_NAMESPACE}
-	oc policy add-role-to-user \
-		system:image-puller system:serviceaccount:${PROD_NAMESPACE}:default \
-    	--namespace=${DEV_NAMESPACE}
-	oc policy add-role-to-user \
-		system:image-puller system:serviceaccount:${DEV_NAMESPACE}:default \
-    	--namespace=${BUILD_NAMESPACE}
+	oc policy add-role-to-user system:image-puller system:serviceaccount:${PROD_NAMESPACE}:default -n ${BUILD_NAMESPACE}
+	oc policy add-role-to-user system:image-puller system:serviceaccount:${PROD_NAMESPACE}:default -n ${DEV_NAMESPACE}
+	oc policy add-role-to-user system:image-puller system:serviceaccount:${DEV_NAMESPACE}:default -n ${BUILD_NAMESPACE}
+	oc adm policy add-role-to-user admin system:serviceaccount:fsi-fraud-detection-xops:pipeline -n ${PROD_NAMESPACE}
 	oc apply -f deploy/pvc_data.yaml -n ${PROD_NAMESPACE}
 	oc apply -f deploy/pvc_models.yaml -n ${BUILD_NAMESPACE}
 

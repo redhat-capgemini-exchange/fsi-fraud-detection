@@ -11,7 +11,7 @@ items:
           type: string
           description: A list of Jupyter Notebooks to run.
         - name: PATH_CONTEXT
-          description: The location of the path to run s2i from.
+          description: The location of the path to run the notebook from.
           default: .
           type: string
         - name: EXTRA_ENV
@@ -19,6 +19,9 @@ items:
         - name: PAPERMILL_VERSION
           description: The version of Papermill to install.
           default: 2.3.4
+        - name: DELETE_VIRTUAL_ENV
+          description: Deletes the python virtual environment if set to 'true'.
+          default: false
       steps:
         - script: >
             #!/usr/bin/env sh
@@ -32,12 +35,20 @@ items:
 
               for element in "${array[@]}"
               do
-                  echo "$element"
                   export "$element"
               done
             fi
 
             cd $(params.PATH_CONTEXT)
+
+            if [[ "$DELETE_VIRTUAL_ENV" = 'true' ]] ; then
+                rm -rf venv
+            fi
+
+            if [[ ! -d "venv" ]] ; then
+              python -m venv venv
+            fi
+            source venv/bin/activate
 
             pip install -r requirements.txt
 
@@ -47,10 +58,6 @@ items:
           env:
           - name: PARAM_EXTRA_ENV
             value: $(params.EXTRA_ENV)
-          #- name: PARAM_NOTEBOOKS
-          #  value: $(params.NOTEBOOKS)
-          #- name: PARAM_PAPERMILL_VERSION
-          #  value: $(params.PAPERMILL_VERSION)
           image: ubi8/python-39
           name: 'run-notebooks'
           resources:
@@ -83,6 +90,48 @@ items:
             set -eu
 
             ls -la /workspace/source
+          image: ubi8/ubi-minimal
+          name: ''
+          resources: {}
+          volumeMounts:
+            - mountPath: /gen-source
+              name: gen-source
+          workingDir: $(workspaces.source.path)
+      volumes:
+        - emptyDir: {}
+          name: gen-source
+      workspaces:
+        - mountPath: /workspace/source
+          name: source
+
+  - kind: ClusterTask
+    apiVersion: tekton.dev/v1beta1
+    metadata:
+      name: copy-file
+    spec:
+      params:
+        - name: SRC_PATH
+          type: string
+          description: The files source path, relative to PATH_CONTEXT
+        - name: DEST_PATH
+          type: string
+          description: The files destination path, relative to PATH_CONTEXT
+        - name: PATH_CONTEXT
+          description: The location of the path to run the notebook from.
+          default: .
+        #- name: EXTRA_PARAMS
+        #  type: string
+        #  description: Additional params for the cp command.
+        #  default:
+      steps:
+        - script: >
+            #!/usr/bin/env sh
+
+            set -eu
+
+            cd $(params.PATH_CONTEXT)
+
+            cp $(params.SRC_PATH) $(params.DEST_PATH)
           image: ubi8/ubi-minimal
           name: ''
           resources: {}

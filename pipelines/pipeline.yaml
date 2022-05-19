@@ -4,27 +4,29 @@ items:
   - kind: Pipeline
     apiVersion: tekton.dev/v1beta1
     metadata:
-      name: ml-pipeline
+      name: fraud-app-pipeline
     spec:
       params:
-        #- default: model
-        #  name: MODEL
-        #  type: string
+        - name: APP_NAME
+          type: string
+          default: 'fraud-app'
+        - name: NAMESPACE
+          type: string
+          default: 'fsi-fraud-detection'
         - name: GIT_REPO
           type: string
           default: 'https://github.com/redhat-capgemini-exchange/fsi-fraud-detection'
         - name: GIT_REVISION
           type: string
           default: develop
-        #- default: 'image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/mlmodel'
-        #  name: IMAGE_NAME
-        #  type: string
+        - default: 'image-registry.openshift-image-registry.svc:5000/fsi-fraud-detection-xops/fraud-app'
+          name: IMAGE_NAME
+          type: string
         - name: PATH_CONTEXT
           type: string
           default: notebooks
-        #- default: 3.9-ubi8
-        #  name: VERSION
-        #  type: string
+        - name: EXTRA_ENV
+          type: string
       tasks:
         - name: fetch-notebooks
           params:
@@ -42,12 +44,15 @@ items:
           workspaces:
             - name: output
               workspace: workspace
+        
         - name: merge
           params:
             - name: NOTEBOOKS
               value: '04_merge_data.ipynb'
             - name: PATH_CONTEXT
               value: $(params.PATH_CONTEXT)
+            - name: EXTRA_ENV
+              value: $(params.EXTRA_ENV)
           runAfter:
             - fetch-notebooks
           taskRef:
@@ -56,5 +61,86 @@ items:
           workspaces:
             - name: source
               workspace: workspace
+
+        - name: feature-engineering
+          params:
+            - name: NOTEBOOKS
+              value: '05_feature_engineering.ipynb'
+            - name: PATH_CONTEXT
+              value: $(params.PATH_CONTEXT)
+            - name: EXTRA_ENV
+              value: $(params.EXTRA_ENV)
+          runAfter:
+            - merge
+          taskRef:
+            kind: ClusterTask
+            name: run-notebook
+          workspaces:
+            - name: source
+              workspace: workspace
+
+        - name: model-training
+          params:
+            - name: NOTEBOOKS
+              value: '06_model_training.ipynb'
+            - name: PATH_CONTEXT
+              value: $(params.PATH_CONTEXT)
+            - name: EXTRA_ENV
+              value: $(params.EXTRA_ENV)
+          runAfter:
+            - feature-engineering
+          taskRef:
+            kind: ClusterTask
+            name: run-notebook
+          workspaces:
+            - name: source
+              workspace: workspace
+
+        - name: copy-model
+          params:
+            - name: SRC_PATH
+              value: './data/models/model_latest.pkl'
+            - name: DEST_PATH
+              value: '../applications/fraud_app/model_latest.pkl'
+            - name: PATH_CONTEXT
+              value: $(params.PATH_CONTEXT)
+          runAfter:
+            - model-training
+          taskRef:
+            kind: ClusterTask
+            name: copy-file
+          workspaces:
+            - name: source
+              workspace: workspace
+
+        - name: build-app
+          params:
+            - name: IMAGE
+              value: $(params.IMAGE_NAME)
+            - name: TLSVERIFY
+              value: 'false'
+            - name: PATH_CONTEXT
+              value: 'applications/fraud_app'
+            - name: VERSION
+              value: 3.9-ubi8
+          runAfter:
+            - copy-model
+          taskRef:
+            kind: ClusterTask
+            name: s2i-python
+          workspaces:
+            - name: source
+              workspace: workspace
+
+        - name: deploy
+          params:
+            - name: SCRIPT
+              value: oc rollout status deploy/$(params.APP_NAME) -n $(params.NAMESPACE)
+          runAfter:
+            - build-app
+          taskRef:
+            kind: ClusterTask
+            name: openshift-client
+            
       workspaces:
         - name: workspace
