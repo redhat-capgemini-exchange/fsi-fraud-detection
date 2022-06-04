@@ -21,7 +21,7 @@ items:
           default: 2.3.4
         - name: DELETE_VIRTUAL_ENV
           description: Deletes the python virtual environment if set to 'true'.
-          default: false
+          default: 'false'
       steps:
         - script: >
             #!/usr/bin/env sh
@@ -41,13 +41,14 @@ items:
 
             cd $(params.PATH_CONTEXT)
 
-            if [[ "$DELETE_VIRTUAL_ENV" = 'true' ]] ; then
+            if [[ "$PARAM_DELETE_VIRTUAL_ENV" = 'true' ]] ; then
                 rm -rf venv
             fi
 
             if [[ ! -d "venv" ]] ; then
               python -m venv venv
             fi
+            
             source venv/bin/activate
 
             pip install -r requirements.txt
@@ -58,6 +59,8 @@ items:
           env:
           - name: PARAM_EXTRA_ENV
             value: $(params.EXTRA_ENV)
+          - name: PARAM_DELETE_VIRTUAL_ENV
+            value: $(params.DELETE_VIRTUAL_ENV)
           image: ubi8/python-39
           name: 'run-notebooks'
           resources:
@@ -121,7 +124,7 @@ items:
           default: .
         - name: EXTRA_PARAMS
           type: string
-          description: Additional params for the cp command ('.' equals no parameters).
+          description: Additional params for the cp command.
           default: .
       steps:
         - script: >

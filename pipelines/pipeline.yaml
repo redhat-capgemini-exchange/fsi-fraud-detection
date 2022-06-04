@@ -135,7 +135,7 @@ items:
         - name: deploy
           params:
             - name: SCRIPT
-              value: oc rollout status deploy/$(params.APP_NAME) -n $(params.NAMESPACE)
+              value: oc rollout latest deploymentconfig/$(params.APP_NAME) -n $(params.NAMESPACE)
           runAfter:
             - build-app
           taskRef:

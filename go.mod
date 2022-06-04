@@ -8,5 +8,5 @@ require (
 	github.com/prometheus/client_golang v1.12.1
 	github.com/stretchr/testify v1.7.1
 	github.com/txsvc/goreq v1.0.1
-	github.com/txsvc/stdlib/v2 v2.1.0
+	github.com/txsvc/stdlib/v2 v2.2.0
 )
