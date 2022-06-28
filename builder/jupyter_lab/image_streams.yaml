@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: ImageStream
+    apiVersion: image.openshift.io/v1
+    metadata:
+      name: jupyter-lab
+      labels:
+        app.openshift.io/runtime: python
+      annotations:
+        description: JupyterLab base image

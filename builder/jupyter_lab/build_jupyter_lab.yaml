@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: BuildConfig
+    apiVersion: build.openshift.io/v1
+    metadata:
+      name: jupyter-lab
+      labels:
+        app.openshift.io/runtime: python
+    spec:
+      source:
+        git:
+          ref: develop
+          uri: "https://github.com/redhat-capgemini-exchange/fsi-fraud-detection.git"
+        contextDir: builder/jupyter_lab
+        type: Git
+      strategy:
+        type: Docker
+        dockerStrategy:
+          dockerfilePath: Dockerfile
+      output:
+        to:
+          kind: ImageStreamTag
+          name: jupyter-lab:1.0.0
+          namespace: openshift
+      triggers:
+        - type: ImageChange
+          imageChange: {}
+        - type: ConfigChange

@@ -1,0 +1,115 @@
+apiVersion: v1
+kind: List
+items:
+  - kind: DeploymentConfig
+    apiVersion: apps.openshift.io/v1
+    metadata:
+      name: jupyter-lab
+      labels:
+        svc: jupyter-lab
+        app: jupyter-notebooks
+        app.openshift.io/runtime: python
+    spec:
+      selector:
+        svc: jupyter-lab
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            svc: jupyter-lab
+            app: jupyter-notebooks
+        spec:
+          volumes:
+            - name: jupyter-lab-data
+              persistentVolumeClaim:
+                claimName: jupyter-lab-data-pvc
+            - name: jupyter-lab-src
+              persistentVolumeClaim:
+                claimName: jupyter-lab-src-pvc
+          containers:
+            - name: jupyter-lab
+              image: >-
+                image-registry.openshift-image-registry.svc:5000/openshift/jupyter-lab:1.0.0
+              imagePullPolicy: Always
+          
+              #env:
+              #  - name: JUPYTER_CMD
+              #    value: lab
+
+              #resources:
+              #  limits:
+              #    cpu: "2"
+              #    memory: 8Gi
+              #  requests:
+              #    cpu: "1"
+              #    memory: 4Gi
+              
+              volumeMounts:
+                - name: jupyter-lab-src
+                  mountPath: "/opt/app-root/src"
+                - name: jupyter-lab-data
+                  mountPath: "/opt/app-root/data"
+
+  - kind: Route
+    apiVersion: route.openshift.io/v1
+    metadata:
+      name: jupyter-lab
+      labels:
+        app: jupyter-notebooks
+    spec:
+      to:
+        kind: Service
+        name: http-jupyter-lab
+        weight: 100
+      port:
+        targetPort: http
+      tls:
+        termination: edge
+        insecureEdgeTerminationPolicy: Redirect
+      wildcardPolicy: None
+      
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: http-jupyter-lab
+      labels:
+        app: jupyter-notebooks
+    spec:
+      ports:
+        - protocol: TCP
+          port: 8080
+          targetPort: 8080
+          name: http
+      selector:
+        svc: jupyter-lab
+      type: ClusterIP
+
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: jupyter-lab-data-pvc
+      labels:
+        app: jupyter-notebooks
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: gp2
+      volumeMode: Filesystem
+
+  - kind: PersistentVolumeClaim
+    apiVersion: v1
+    metadata:
+      name: jupyter-lab-src-pvc
+      labels:
+        app: jupyter-notebooks
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: gp2
+      volumeMode: Filesystem

@@ -79,8 +79,16 @@ prepare_images:
 	oc import-image ubi8/s2i-base:latest --from=registry.access.redhat.com/ubi8/s2i-base:1-343 --confirm -n ${BUILD_NAMESPACE}
 	oc import-image ubi8/python-39:1-51 --from=registry.access.redhat.com/ubi8/python-39:1-51 --confirm -n ${BUILD_NAMESPACE}
 	oc import-image ubi8/python-39:latest --from=registry.access.redhat.com/ubi8/python-39:1-51 --confirm -n ${BUILD_NAMESPACE}
-	oc apply -f builder/build_golang_base.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f builder/golang_custom/build_golang_base.yaml -n ${BUILD_NAMESPACE}
 
+.PHONY: prepare_jupyter_lab
+prepare_jupyter_lab:
+	oc policy add-role-to-user system:image-builder \
+		system:serviceaccount:${BUILD_NAMESPACE}:builder \
+		--namespace=openshift
+	oc apply -f builder/jupyter_lab/image_streams.yaml -n openshift
+	oc apply -f builder/jupyter_lab/build_jupyter_lab.yaml -n ${BUILD_NAMESPACE}
+	oc apply -f deploy/jupyter_lab.yaml -n ${DEV_NAMESPACE}
 
 # cleanup tasks
 
