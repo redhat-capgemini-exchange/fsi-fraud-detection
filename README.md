@@ -23,6 +23,16 @@ Open the JupyterLab:
 https://jupyter-lab-fsi-fraud-detection-dev.apps.<cluster_id>.opentlc.com
 ```
 
+Open a terminal in JupyterLab:
+
+```shell
+git clone -b develop --single-branch --depth 1 https://github.com/redhat-capgemini-exchange/fsi-fraud-detection
+
+# install the dependencies
+pip install -r fsi-fraud-detection/notebooks/requirements.txt
+
+```
+
 ### Run the notebooks
 
 To create synthetic data:
